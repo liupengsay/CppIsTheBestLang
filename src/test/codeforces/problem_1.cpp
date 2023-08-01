@@ -2,9 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <iostream>
-#include <vector>
-#include <cassert>
 
 using namespace std;
 
@@ -26,7 +23,6 @@ public:
 
 int main() {
     vector<int> nums = {2, 7, 11, 15};
-    assert(1.0==1);
     int target = 9;
     Solution solution;
     vector<int> result = solution.twoSum(nums, target);
