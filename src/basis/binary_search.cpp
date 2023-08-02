@@ -91,7 +91,8 @@ I. Photo Processing（https://codeforces.com/problemset/problem/883/I）二分�
 #include <functional>
 #include <vector>
 #include <cassert>
-
+#include <iostream>
+using namespace std;
 
 class BinarySearch {
 public:
@@ -161,7 +162,7 @@ public:
         int low = 0;
         size_t high = nums.size() - 1;
 
-
+        // 整数二分测试
         auto check_left = [&](int x) -> bool {
             return nums[x] >= 2;
         };
@@ -178,6 +179,7 @@ public:
         double target = 2.0 / 3;
         double error = 1e-5;
 
+        // 浮点数二分测试
         auto check_left_double = [&](double x) -> bool {
             return x * 3 >= 2;
         };
@@ -190,7 +192,9 @@ public:
         };
         double x_pre_right = BinarySearch::find_float_right(low_double, high_double, check_right_double);
         assert(abs(x_pre_right - target) <= error);
+        cout << "BinarySearchTest Done" << endl;
     }
+
 };
 
 
