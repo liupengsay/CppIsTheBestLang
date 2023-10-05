@@ -18,4 +18,8 @@ add_executable(template test/codeforces/template.cpp)
 add_executable(diff_array src/basis/diff_array.cpp)
 add_executable(fast_io src/fast_io.cpp)
 add_executable(test_template test/template.cpp)
-add_executable(struct_data_sort src/data_structure/struct_data_sort.cpp)
+add_executable(struct_data_sort src/data_structure/struct_data_sort.cpp
+        src/data_structure/segment_tree.cpp)
+
+add_executable(problem_a test/codeforces/problem_a.cpp)
+
