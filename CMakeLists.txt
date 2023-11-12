@@ -1,15 +1,16 @@
 
 
 cmake_minimum_required(VERSION 3.26)
-project(AlgorithmCPP)
+project(CppIsTheBestLang)
 
 set(CMAKE_CXX_STANDARD 14)
 
 
 include_directories(.)
 include_directories(src)
-include_directories(test)
+include_directories(tests)
 
+add_executable(binary_search src/basis/binary_search/example.cpp)
 
 add_executable(main_problem_0 test/leetcode/problem_0.cpp)
 add_executable(main_problem_1 test/leetcode/problem_1.cpp)
@@ -20,6 +21,5 @@ add_executable(fast_io src/fast_io.cpp)
 add_executable(test_template test/template.cpp)
 add_executable(struct_data_sort src/data_structure/struct_data_sort.cpp
         src/data_structure/segment_tree.cpp)
-
 add_executable(problem_a test/codeforces/problem_a.cpp)
 
