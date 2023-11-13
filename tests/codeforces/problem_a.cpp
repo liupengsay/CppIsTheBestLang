@@ -1,98 +1,98 @@
 #include <iostream>
 #include <vector>
-#include <deque>
-#include <algorithm>
-#include <limits>
-using namespace std;
+#include <cassert>
+#include <random>
 
-const int INF = numeric_limits<int>::max();
-
-class FastIO {
+class PointAddRangeSum {
 public:
-    static int readInt() {
-        int x;
-        cin >> x;
-        return x;
+    PointAddRangeSum(int n) : n(n), t(n + 1, 0) {}
+
+    static int lowestBit(int i) {
+        return i & (-i);
     }
 
-    static vector<int> readListInts() {
-        int n;
-        cin >> n;
-        vector<int> nums(n);
+    [[noreturn]] [[noreturn]] void build(const std::vector<int>& nums) {
+        assert(nums.size() == n);
+        std::vector<int> pre(n + 1, 0);
         for (int i = 0; i < n; i++) {
-            cin >> nums[i];
+            pre[i + 1] = pre[i] + nums[i];
+            t[i + 1] = pre[i + 1] - pre[i + 1 - lowestBit(i + 1)];
+        }
+    }
+
+    void pointAdd(int i, int mi) {
+        assert(1 <= i && i <= n);
+        while (i < t.size()) {
+            t[i] += mi;
+            i += lowestBit(i);
+        }
+    }
+
+    std::vector<int> get() {
+        std::vector<int> nums(n);
+        for (int i = 0; i < n; i++) {
+            nums[i] = preSum(i + 1) - preSum(i);
         }
         return nums;
     }
 
-    static void print(int x) {
-        cout << x << endl;
+    int rangeSum(int x, int y) {
+        assert(1 <= x && x <= y && y <= n);
+        int res = preSum(y) - preSum(x - 1);
+        return res;
     }
-};
 
-class Solution {
-public:
-    static void main() {
-        int m, n, k;
-        m = FastIO::readInt();
-        n = FastIO::readInt();
-        k = FastIO::readInt();
+private:
+    int n;
+    std::vector<int> t;
 
-        vector<vector<int>> grid(m, vector<int>(n));
-        for (int i = 0; i < m; i++) {
-            grid[i] = FastIO::readListInts();
+    int preSum(int i) {
+        assert(1 <= i && i <= n);
+        int mi = 0;
+        while (i > 0) {
+            mi += t[i];
+            i -= lowestBit(i);
         }
-
-        auto check = [&](int x, int y) {
-            vector<vector<int>> dis(m, vector<int>(n, INF));
-            dis[x][y] = 0;
-            deque<vector<int>> stack;
-            stack.push_back({x, y, 0});
-            while (!stack.empty()) {
-                vector<int> curr = stack.front();
-                stack.pop_front();
-                int x = curr[0];
-                int y = curr[1];
-                int d = curr[2];
-                vector<vector<int>> directions = {{x + 1, y}, {x - 1, y}, {x, y - 1}, {x, y + 1}};
-                for (const vector<int>& dir : directions) {
-                    int a = dir[0];
-                    int b = dir[1];
-                    if (a >= 0 && a < m && b >= 0 && b < n && grid[a][b] != -1 && dis[a][b] > d + k) {
-                        dis[a][b] = d + k;
-                        stack.push_back({a, b, d + k});
-                    }
-                }
-            }
-            return dis;
-        };
-
-        vector<vector<int>> dis1 = check(0, 0);
-        vector<vector<int>> dis2 = check(m - 1, n - 1);
-        int ans = INF;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                ans = min(ans, dis1[i][j] + dis2[i][j]);
-            }
-        }
-        int pre = INF;
-        int post = INF;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] != -1) {
-                    pre = min(pre, dis1[i][j] + grid[i][j]);
-                    post = min(post, dis2[i][j] + grid[i][j]);
-                }
-            }
-        }
-        if (pre + post < ans) {
-            ans = pre + post;
-        }
-        FastIO::print(ans < INF ? ans : -1);
+        return mi;
     }
 };
 
 int main() {
-    Solution::main();
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> ceilDist(10, 1000);
+
+
+    for (int i = 0; i < 10; i++) {
+
+        int ceil = ceilDist(gen);
+        std::uniform_int_distribution<> numDist(-ceil, ceil);
+        std::vector<int> nums(ceil);
+        for (int j = 0; j < ceil; j++) {
+            nums[j] = numDist(gen);
+        }
+
+        PointAddRangeSum treeArray(ceil);
+        treeArray.build(nums);
+
+        for (int j = 0; j < ceil; j++) {
+            int d = numDist(gen);
+            int index = std::uniform_int_distribution<>(0, ceil - 1)(gen);
+            nums[index] += d;
+            treeArray.pointAdd(index + 1, d);
+
+            int left = std::uniform_int_distribution<>(0, ceil - 1)(gen);
+            int right = std::uniform_int_distribution<>(left, ceil - 1)(gen);
+            int sumRange = 0;
+            for (int k = left; k <= right; k++) {
+                sumRange += nums[k];
+            }
+            assert(sumRange == treeArray.rangeSum(left + 1, right + 1));
+            assert(nums == treeArray.get());
+        }
+    }
+
+    std::cout << "All assertions passed successfully." << std::endl;
+
     return 0;
 }
