@@ -43,7 +43,6 @@ public:
         };
         double x_pre_right = BinarySearch::find_float_right(low_double, high_double, check_right_double);
         assert(abs(x_pre_right - target) <= error);
-        cout << "BinarySearchTest Done" << endl;
     }
 
 };

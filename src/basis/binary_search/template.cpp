@@ -1,14 +1,7 @@
 #include <functional>
-#include <vector>
-#include <cassert>
-#include <iostream>
-
 
 class BinarySearch {
 public:
-    static int add(int x, int y){
-        return x + y;
-    }
 
     static int find_int_left(int low, int high, const std::function<bool(int)> &check) {
         // 模板: 整数范围内二分查找，选择最靠左满足check
