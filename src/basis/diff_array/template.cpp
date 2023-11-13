@@ -1,91 +1,142 @@
-from typing import List
+#include <vector>
+#include <iostream>
+#include <cassert>
+#include <random>
+
+using namespace std;
+
+class PreFixSumMatrix {
+private:
+    vector<vector<int>> pre; // 前缀和数组
+
+public:
+    explicit PreFixSumMatrix(vector<vector<int>>& mat) { // 构造函数
+        size_t m = mat.size(), n = mat[0].size();
+        pre = vector<vector<int>>(m + 1, vector<int>(n + 1, 0)); // 初始化前缀和数组
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                pre[i + 1][j + 1] = pre[i][j + 1] + pre[i + 1][j] - pre[i][j] + mat[i][j]; // 计算前缀和
+            }
+        }
+    }
+
+    int query(int xa, int ya, int xb, int yb) { // 查询函数
+        return pre[xb + 1][yb + 1] - pre[xb + 1][ya] - pre[xa][yb + 1] + pre[xa][ya]; // 计算子矩阵和
+    }
+};
 
 
-class PreFixSumMatrix:
-    def __init__(self, mat: List[List[int]]):
-        self.mat = mat
-        self.m, self.n = len(mat), len(mat[0])
-        self.pre = [[0] * (self.n + 1) for _ in range(self.m + 1)]
-        for i in range(self.m):
-            for j in range(self.n):
-                self.pre[i + 1][j + 1] = self.pre[i][j + 1] + self.pre[i + 1][j] - self.pre[i][j] + mat[i][j]
-        return
 
-    def query(self, xa: int, ya: int, xb: int, yb: int) -> int:
-        assert 0 <= xa <= xb <= self.m - 1
-        assert 0 <= ya <= yb <= self.n - 1
-        # left up corner is (xa, ya) and right down corner is (xb, yb)
-        return self.pre[xb + 1][yb + 1] - self.pre[xb + 1][ya] - self.pre[xa][yb + 1] + self.pre[xa][ya]
+class DiffArray {
+public:
+    static vector<int> get_diff_array(int n, vector<vector<int>>& shifts) {
+        // 计算差分数组
+        vector<int> diff(n, 0);
+        for (const auto& shift : shifts) {
+            int i = shift[0], j = shift[1], d = shift[2];
+            if (j + 1 < n) {
+                diff[j + 1] -= d;
+            }
+            diff[i] += d;
+        }
+        for (int i = 1; i < n; i++) {
+            diff[i] += diff[i - 1];
+        }
+        return diff;
+    }
 
+    static vector<int> get_array_prefix_sum(int n, vector<int>& lst) {
+        // 计算前缀和
+        vector<int> pre(n + 1, 0);
+        for (int i = 0; i < n; i++) {
+            pre[i + 1] = pre[i] + lst[i];
+        }
+        return pre;
+    }
 
-class DiffArray:
-    def __init__(self):
-        return
-
-    @staticmethod
-    def get_diff_array(n: int, shifts: List[int]) -> List[int]:
-        diff = [0] * n
-        for i, j, d in shifts:
-            if j + 1 < n:
-                diff[j + 1] -= d
-            diff[i] += d
-        for i in range(1, n):
-            diff[i] += diff[i - 1]
-        return diff
-
-    @staticmethod
-    def get_array_prefix_sum(n: int, lst: List[int]) -> List[int]:
-        pre = [0] * (n + 1)
-        for i in range(n):
-            pre[i + 1] = pre[i] + lst[i]
-        return pre
-
-    @staticmethod
-    def get_array_range_sum(pre: List[int], left: int, right: int) -> int:
-        return pre[right + 1] - pre[left]
+    static int get_array_range_sum(vector<int>& pre, int left, int right) {
+        // 计算区间元素和
+        return pre[right + 1] - pre[left];
+    }
+};
 
 
-class DiffMatrix:
-    def __init__(self):
-        return
+class DiffMatrix {
+public:
+    static vector<vector<int>> get_diff_matrix(int m, int n, vector<vector<int>>& shifts) {
+        // 二维差分数组
+        vector<vector<int>> diff(m + 2, vector<int>(n + 2, 0));
+        // 索引从 1 开始，矩阵初始值为 0
+        for (const auto& shift : shifts) {
+            int xa = shift[0], xb = shift[1], ya = shift[2], yb = shift[3], d = shift[4];
+            diff[xa][ya] += d;
+            diff[xa][yb + 1] -= d;
+            diff[xb + 1][ya] -= d;
+            diff[xb + 1][yb + 1] += d;
+        }
 
-    @staticmethod
-    def get_diff_matrix(m: int, n: int, shifts: List[int]) -> List[List[int]]:
-        # two dimensional differential array
-        diff = [[0] * (n + 2) for _ in range(m + 2)]
-        # left up corner is (xa, ya) and right down corner is (xb, yb)
-        for xa, xb, ya, yb, d in shifts:
-            assert 1 <= xa <= xb <= m
-            assert 1 <= ya <= yb <= n
-            diff[xa][ya] += d
-            diff[xa][yb + 1] -= d
-            diff[xb + 1][ya] -= d
-            diff[xb + 1][yb + 1] += d
+        // 计算差分数组的前缀和
+        for (int i = 1; i <= m + 1; i++) {
+            for (int j = 1; j <= n + 1; j++) {
+                diff[i][j] += diff[i - 1][j] + diff[i][j - 1] - diff[i - 1][j - 1];
+            }
+        }
 
-        for i in range(1, m + 2):
-            for j in range(1, n + 2):
-                diff[i][j] += diff[i - 1][j] + \
-                              diff[i][j - 1] - diff[i - 1][j - 1]
+        // 转换成 m 行 n 列的数组并返回
+        vector<vector<int>> res(m, vector<int>(n, 0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                res[i][j] = diff[i + 1][j + 1];
+            }
+        }
+        return res;
+    }
 
-        for i in range(1, m + 1):
-            diff[i] = diff[i][1:n + 1]
-        return diff[1: m + 1]
+    static vector<vector<int>> get_diff_matrix2(int m, int n, vector<vector<int>>& shifts) {
+        // 二维差分数组
+        vector<vector<int>> diff(m + 1, vector<int>(n + 1, 0));
+        // 索引从 0 开始，矩阵初始值为 0
+        for (const auto& shift : shifts) {
+            int xa = shift[0], xb = shift[1], ya = shift[2], yb = shift[3], d = shift[4];
+            diff[xa][ya] += d;
+            diff[xa][yb + 1] -= d;
+            diff[xb + 1][ya] -= d;
+            diff[xb + 1][yb + 1] += d;
+        }
 
-    @staticmethod
-    def get_diff_matrix2(m, n, shifts):
-        diff = [[0] * (n + 1) for _ in range(m + 1)]
-        # left up corner is (xa, ya) and right down corner is (xb, yb)
-        for xa, xb, ya, yb, d in shifts:
-            assert 0 <= xa <= xb <= m - 1
-            assert 0 <= ya <= yb <= n - 1
-            diff[xa][ya] += d
-            diff[xa][yb + 1] -= d
-            diff[xb + 1][ya] -= d
-            diff[xb + 1][yb + 1] += d
+        // 转换成 m 行 n 列的数组并返回
+        vector<vector<int>> res(m+1, vector<int>(n+1, 0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                res[i+1][j+1] = res[i + 1][j] + \
+                    res[i][j + 1] - res[i][j] + diff[i][j];
+            }
+        }
 
-        res = [[0] * (n + 1) for _ in range(m + 1)]
-        for i in range(m):
-            for j in range(n):
-                res[i + 1][j + 1] = res[i + 1][j] + \
-                                    res[i][j + 1] - res[i][j] + diff[i][j]
-        return [item[1:] for item in res[1:]]
+        vector<vector<int>> ret(m, vector<int>(n, 0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                ret[i][j] = res[i+1][j+1];
+            }
+        }
+        return ret;
+    }
+
+    static vector<vector<int>> get_matrix_prefix_sum(vector<vector<int>>& mat) {
+        // 二维前缀和
+        int m = mat.size(), n = mat[0].size();
+        vector<vector<int>> pre(m + 1, vector<int>(n + 1, 0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                pre[i + 1][j + 1] = pre[i][j + 1] + pre[i + 1][j] - pre[i][j] + mat[i][j];
+            }
+        }
+        return pre;
+    }
+
+    static int get_matrix_range_sum(vector<vector<int>>& pre, int xa, int ya, int xb, int yb) {
+        // 二维子矩阵和
+        return pre[xb + 1][yb + 1] - pre[xb + 1][ya] - pre[xa][yb + 1] + pre[xa][ya];
+    }
+};
+
