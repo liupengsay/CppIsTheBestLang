@@ -3,7 +3,7 @@
 #include <cassert>
 #include <random>
 #include <iostream>
-#include "template.cpp"
+#include "problem.cpp"
 
 class TestGeneral {
 public:
@@ -355,6 +355,11 @@ public:
             assert(tree.rangeQuery(x1 + 1, y1 + 1, x2 + 1, y2 + 1) == expected);
         }
     }
+
+    static void SolutionTest() {
+        std::vector<int> nums={3, 4, -1};
+        assert(Solution::lc_2659(nums)==5);
+    }
 };
 
 
@@ -369,5 +374,6 @@ int main() {
     TestGeneral::RangeAddRangeSumTest();
     TestGeneral::PointAddRangeSum2DTest();
     TestGeneral::RangeAddRangeSum2DTest();
+    TestGeneral::SolutionTest();
     return 0;
 }
