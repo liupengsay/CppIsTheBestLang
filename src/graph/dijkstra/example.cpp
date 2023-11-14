@@ -2,7 +2,6 @@
 #include <vector>
 #include <cassert>
 #include <random>
-#include "template.cpp"
 #include "problem.cpp"
 
 
