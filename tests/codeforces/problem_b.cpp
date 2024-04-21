@@ -1,120 +1,118 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
-#include <functional>
+#include <stack>
+#include <algorithm>
 
-class BinarySearch {
+class Solution {
 public:
-    static int find_int_left(int low, int high, const std::function<bool(int)> &check) {
-        // 模板: 整数范围内二分查找，选择最靠左满足check
+    void solve() {
+        int n, k;
+        std::cin >> n >> k;
+
+        std::vector<std::vector<std::pair<int, int>>> dct(n);
+        for (int i = 1; i < n; i++) {
+            int x, y, z;
+            std::cin >> x >> y >> z;
+            x--;
+            y--;
+            dct[x].emplace_back(y, z);
+        }
+        for (int i = 0; i < n; i++) {
+            std::reverse(dct[i].begin(), dct[i].end());
+        }
+
+        if (n == 1) {
+            std::cout << 0 << std::endl;
+            return;
+        }
+
+        std::vector<int> dis(n);
+        std::stack<int> st;
+        st.push(0);
+        while (!st.empty()) {
+            int x = st.top();
+            st.pop();
+            for (auto [y, w]: dct[x]) {
+                dis[y] = dis[x] + w;
+                st.push(y);
+            }
+        }
+
+        int low = 0;
+        int high = 1000000000;
+
+        int ans = binarySearch(low, high, k, dis, dct);
+        std::cout << ans << std::endl;
+    }
+
+private:
+    int findHigh(const std::vector<std::vector<std::pair<int, int>>> &dct) {
+        std::stack<std::pair<int, int>> st;
+        int d = 0;
+        st.push({0, 0});
+        while (!st.empty()) {
+            auto [a, s] = st.top();
+            st.pop();
+            if (a >= 0) {
+                d += s;
+                st.push({~a, s});
+                for (auto [b, dd]: dct[a]) {
+                    st.push({b, dd});
+                }
+            } else {
+                d += s;
+            }
+        }
+        return d;
+    }
+
+    bool check(int t, int k, const std::vector<int> &dis, const std::vector<std::vector<std::pair<int, int>>> &dct) {
+        std::stack<std::pair<int, int>> st;
+        int d = 0;
+        int res = 0;
+        st.push({0, 0});
+        while (!st.empty()) {
+            auto [a, s] = st.top();
+            st.pop();
+            if (a >= 0) {
+                d += s;
+                st.push({~a, s});
+                for (auto [b, dd]: dct[a]) {
+                    st.push({b, dd});
+                }
+            } else {
+                a = ~a;
+                if (dct[a].empty()) {
+                    if (d + dis[a] > t) {
+                        res++;
+                        if (res + 1 > k) {
+                            return false;
+                        }
+                        d = dis[a];
+                    }
+                }
+                d += s;
+            }
+        }
+        return true;
+    }
+
+    int binarySearch(int low, int high, int k, const std::vector<int> &dis,
+                     const std::vector<std::vector<std::pair<int, int>>> &dct) {
         while (low < high - 1) {
             int mid = low + (high - low) / 2;
-            if (check(mid)) {
+            if (check(mid, k, dis, dct)) {
                 high = mid;
             } else {
                 low = mid;
             }
         }
-        return check(low) ? low : high;
-    }
-
-    static int find_int_right(int low, int high, const std::function<bool(int)> &check) {
-        // 模板: 整数范围内二分查找，选择最靠右满足check
-        while (low < high - 1) {
-            int mid = low + (high - low) / 2;
-            if (check(mid)) {
-                low = mid;
-            } else {
-                high = mid;
-            }
-        }
-        return check(high) ? high : low;
-    }
-
-    static double
-    find_float_left(double low, double high, const std::function<bool(double)> &check, double error = 1e-6) {
-        // 模板: 浮点数范围内二分查找, 选择最靠左满足check
-        while (low < high - error) {
-            double mid = low + (high - low) / 2;
-            if (check(mid)) {
-                high = mid;
-            } else {
-                low = mid;
-            }
-        }
-        return check(low) ? low : high;
-    }
-
-    static double
-    find_float_right(double low, double high, const std::function<bool(double)> &check, double error = 1e-6) {
-        // 模板: 浮点数范围内二分查找, 选择最靠右满足check
-        while (low < high - error) {
-            double mid = low + (high - low) / 2;
-            if (check(mid)) {
-                low = mid;
-            } else {
-                high = mid;
-            }
-        }
-        return check(high) ? high : low;
+        return check(low, k, dis, dct) ? low : high;
     }
 };
 
-
-
-std::string lg_p1542() {
-
-    int n;
-    std::cin >> n;
-    std::vector<std::vector<int>> nums(n, std::vector<int>(3));
-    for (int i = 0; i < n; ++i) {
-        std::cin >> nums[i][0] >> nums[i][1] >> nums[i][2];
-    }
-
-    auto check= [&] (double xx) {
-        // 最早与最晚出发
-        auto add = [&](std::vector<int> &lst1, std::vector<int> &lst2) {
-            // 进行分数加减
-            int a = lst1[0], b = lst1[1];
-            int c = lst2[0], d = lst2[1];
-            int d1 = a * d + c * b;
-            int d2 = b * d;
-            std::vector<int> res = {d1, d2};
-            return res;
-        };
-
-        std::vector<int> t1 = {0, 1};
-        std::vector<double> res = {xx, 1};
-        while (((int)res[0] - res[0]) > 1e-20) {
-            res[0] *= 10;
-            res[1] *= 10;
-        }
-        std::vector<int> tmp = {(int)res[0], (int)res[1]};
-        for (auto &vec: nums) {
-            int x = vec[0], y = vec[1], s = vec[2];
-            std::vector<int> nex = {s * tmp[1], tmp[0]};
-            std::vector<int> cur = add(t1, nex);
-            if (cur[0] > y * cur[1]) {
-                return false;
-            }
-            t1 = cur;
-            if (cur[0] < x * cur[1]){
-                t1 = {x, 1};
-            }
-
-        }
-        return true;
-    };
-
-
-    double ans = BinarySearch::find_float_left(1e-4, 1e7, check);
-    char buffer[32];
-    sprintf(buffer, "%.2f", ans);
-    return buffer;
-}
-
-
 int main() {
-    std::cout << lg_p1542() << std::endl;
+    Solution solution;
+    solution.solve();
     return 0;
 }

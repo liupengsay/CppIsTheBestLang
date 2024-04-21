@@ -1,120 +1,57 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <functional>
+#include<bits/stdc++.h>
+#define rep(i,a,b) for(register int i=(a);i<=(b);i++)
+#define per(i,a,b) for(register int i=(a);i>=(b);i--)
+using namespace std;
+const int N=5e5+9;
+typedef pair<int,int> pii;
 
-class BinarySearch {
-public:
-    static int find_int_left(int low, int high, const std::function<bool(int)> &check) {
-        // 模板: 整数范围内二分查找，选择最靠左满足check
-        while (low < high - 1) {
-            int mid = low + (high - low) / 2;
-            if (check(mid)) {
-                high = mid;
-            } else {
-                low = mid;
-            }
-        }
-        return check(low) ? low : high;
-    }
-
-    static int find_int_right(int low, int high, const std::function<bool(int)> &check) {
-        // 模板: 整数范围内二分查找，选择最靠右满足check
-        while (low < high - 1) {
-            int mid = low + (high - low) / 2;
-            if (check(mid)) {
-                low = mid;
-            } else {
-                high = mid;
-            }
-        }
-        return check(high) ? high : low;
-    }
-
-    static double
-    find_float_left(double low, double high, const std::function<bool(double)> &check, double error = 1e-6) {
-        // 模板: 浮点数范围内二分查找, 选择最靠左满足check
-        while (low < high - error) {
-            double mid = low + (high - low) / 2;
-            if (check(mid)) {
-                high = mid;
-            } else {
-                low = mid;
-            }
-        }
-        return check(low) ? low : high;
-    }
-
-    static double
-    find_float_right(double low, double high, const std::function<bool(double)> &check, double error = 1e-6) {
-        // 模板: 浮点数范围内二分查找, 选择最靠右满足check
-        while (low < high - error) {
-            double mid = low + (high - low) / 2;
-            if (check(mid)) {
-                low = mid;
-            } else {
-                high = mid;
-            }
-        }
-        return check(high) ? high : low;
-    }
-};
-
-
-
-std::string lg_p1542() {
-
-    int n;
-    std::cin >> n;
-    std::vector<std::vector<int>> nums(n, std::vector<int>(3));
-    for (int i = 0; i < n; ++i) {
-        std::cin >> nums[i][0] >> nums[i][1] >> nums[i][2];
-    }
-
-    auto check= [&] (double xx) {
-        // 最早与最晚出发
-        auto add = [&](std::vector<int> &lst1, std::vector<int> &lst2) {
-            // 进行分数加减
-            int a = lst1[0], b = lst1[1];
-            int c = lst2[0], d = lst2[1];
-            int d1 = a * d + c * b;
-            int d2 = b * d;
-            std::vector<int> res = {d1, d2};
-            return res;
-        };
-
-        std::vector<int> t1 = {0, 1};
-        std::vector<double> res = {xx, 1};
-        while (((int)res[0] - res[0]) > 1e-20) {
-            res[0] *= 10;
-            res[1] *= 10;
-        }
-        std::vector<int> tmp = {(int)res[0], (int)res[1]};
-        for (auto &vec: nums) {
-            int x = vec[0], y = vec[1], s = vec[2];
-            std::vector<int> nex = {s * tmp[1], tmp[0]};
-            std::vector<int> cur = add(t1, nex);
-            if (cur[0] > y * cur[1]) {
-                return false;
-            }
-            t1 = cur;
-            if (cur[0] < x * cur[1]){
-                t1 = {x, 1};
-            }
-
-        }
-        return true;
-    };
-
-
-    double ans = BinarySearch::find_float_left(1e-4, 1e7, check);
-    char buffer[32];
-    sprintf(buffer, "%.2f", ans);
-    return buffer;
+inline long long read() {
+    register long long x=0, f=1; register char c=getchar();
+    while(c<'0'||c>'9') {if(c=='-') f=-1; c=getchar();}
+    while(c>='0'&&c<='9') {x=(x<<3)+(x<<1)+c-48,c=getchar();}
+    return x*f;
 }
 
+int n,m,su[N],sv[N],id[N],sz[N],tot[N],deg[N];
+vector<int>e[N],c[N];
+vector<pii>ans;
+
+int find(int i) {return id[i]==i?i:id[i]=find(id[i]);}
+void add(int u,int v) {
+	e[u].push_back(v), e[v].push_back(u);
+	id[find(u)]=find(v);
+	deg[u]++, deg[v]++;
+}
+
+void topo(int u) {
+	queue<int>q;
+	for(auto v:c[u]) if(deg[v]==1) q.push(v);
+	while(!q.empty()) {
+		int u=q.front(); q.pop();
+		for(auto v:e[u]) {
+			deg[v]--;
+			if(deg[v]==1) q.push(v);
+		}
+	}
+}
 
 int main() {
-    std::cout << lg_p1542() << std::endl;
-    return 0;
+	n=read(), m=read();
+	rep(i,1,n) id[i]=i;
+	rep(i,1,m) add(su[i]=read(),sv[i]=read());
+	rep(i,1,n) sz[find(i)]++, c[id[i]].push_back(i);
+	rep(i,1,m) tot[id[su[i]]]++;
+	rep(i,1,n) if(id[i]==i) {
+		if(tot[i]==sz[i]-1) {
+			for(auto u:c[i]) if(deg[u]==1) ans.push_back(pii(u,e[u][0]));
+		} else {
+			topo(i);
+			for(auto u:c[i]) if(deg[u])
+				for(auto v:e[u]) if(deg[v]==1) ans.push_back(pii(u,v));
+		}
+	}
+	sort(ans.begin(),ans.end());
+	printf("%d\n",ans.size());
+	for(auto x:ans) printf("%d %d\n",x.first,x.second);
+	return 0;
 }
