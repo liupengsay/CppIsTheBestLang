@@ -1,20 +1,19 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
-#include <bits/stdc++.h>
+int bisect_right(const std::vector<int>& sorted_list, int target) {
+    return std::upper_bound(sorted_list.begin(), sorted_list.end(), target) - sorted_list.begin();
+}
 
+int main() {
+    std::vector<int> numbers = {1, 3, 5, 5, 7, 9};
 
-class Solution {
-public:
-    int combinationSum4(std::vector<int> &nums, int target) {
-        std::vector<int> dp(target + 1);
-        dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int &num: nums) {
-                if (num <= i && dp[i - num] < INT_MAX - dp[i])
-                {
-                    dp[i] += dp[i - num];
-                }
-            }
-        }
-        return dp[target];
-    }
-};
+    int target = 6;
+
+    int index = bisect_right(numbers, target);
+
+    std::cout << "Insert position for " << target << ": " << index << std::endl;
+
+    return 0;
+}

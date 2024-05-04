@@ -1,108 +1,115 @@
-import math
+#include <iostream>
+#include <vector>
+#include <set>
+#include <tuple>
+#include <cmath>
+#include <unordered_map>
+#include <algorithm>
+#include <numeric>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 
-class Combinatorics:
-    def __init__(self, n, mod):
-        n += 10
-        self.perm = [1] * n
-        self.rev = [1] * n
-        self.mod = mod
-        for i in range(1, n):
-            # (i!) % mod
-            self.perm[i] = self.perm[i - 1] * i
-            self.perm[i] %= self.mod
-        self.rev[-1] = self.mod_reverse(self.perm[-1], self.mod)  # equal to pow(self.perm[-1], -1, self.mod)
-        for i in range(n - 2, 0, -1):
-            self.rev[i] = (self.rev[i + 1] * (i + 1) % mod)  # pow(i!, -1, mod)
-        self.fault = [0] * n
-        self.fault_perm()
-        return
+class Combinatorics {
+public:
 
-    def ex_gcd(self, a, b):
-        if b == 0:
-            return 1, 0, a
-        else:
-            x, y, q = self.ex_gcd(b, a % b)
-            x, y = y, (x - (a // b) * y)
-            return x, y, q
+    long long n;
+    long long mod;
+    std::vector<long long> perm, rev;
 
-    def mod_reverse(self, a, p):
-        assert math.gcd(a, p) == 1
-        x, y, q = self.ex_gcd(a, p)
-        return (x + p) % p
+    Combinatorics(long long n, long long mod) : n(n + 10), mod(mod) {
+        build_perm();
+        build_rev();
+    }
 
-    def comb(self, a, b):
-        if a < b:
-            return 0
-        # C(a, b) % mod
-        res = self.perm[a] * self.rev[b] * self.rev[a - b]
-        return res % self.mod
+    long long comb(long long a, long long b) {
+        if (a < b) {
+            return 0;
+        }
+        long long res = (1LL * perm[a] * rev[b] % mod) * rev[a - b] % mod;
+        return res;
+    }
 
-    def factorial(self, a):
-        # (a!) % mod
-        res = self.perm[a]
-        return res % self.mod
+    long long factorial(long long a) {
+        return perm[a];
+    }
 
-    def fault_perm(self):
-        # number of fault combinations
-        self.fault[0] = 1
-        self.fault[2] = 1
-        for i in range(3, len(self.fault)):
-            self.fault[i] = (i - 1) * (self.fault[i - 1] + self.fault[i - 2])
-            self.fault[i] %= self.mod
-        return
+    long long inverse(long long n) {
+        return (1LL * perm[n - 1] * rev[n]) % mod;
+    }
 
-    def inv(self, n):
-        # pow(n, -1, mod)
-        return self.perm[n - 1] * self.rev[n] % self.mod
-
-    def catalan(self, n):
-        return (self.comb(2 * n, n) - self.comb(2 * n, n - 1)) % self.mod
+    long long catalan(long long n) {
+        long long res = (comb(2 * n, n) - comb(2 * n, n - 1)) % mod;
+        return res;
+    }
 
 
-class Lucas:
-    def __init__(self):
-        # Comb(a,b) % p
-        return
+    void build_perm() {
+        perm.resize(n + 1);
+        perm[0] = 1;
+        for (long long i = 1; i <= n; ++i) {
+            perm[i] = (1LL * perm[i - 1] * i) % mod;
+        }
+    }
 
-    def lucas(self, n, m, p):
-        # math.comb(n, m) % p where p is prime
-        if m == 0:
-            return 1
-        return ((math.comb(n % p, m % p) % p) * self.lucas(n // p, m // p, p)) % p
+    void build_rev() {
+        rev.resize(n + 1);
+        rev[n] = mod_inverse(perm[n], mod);
+        for (long long i = n - 1; i >= 0; --i) {
+            rev[i] = (1LL * rev[i + 1] * (i + 1)) % mod;
+        }
+    }
 
-    @staticmethod
-    def comb(n, m, p):
-        # comb(n, m ) % p
-        ans = 1
-        for x in range(n - m + 1, n + 1):
-            ans *= x
-            ans %= p
-        for x in range(1, m + 1):
-            ans *= pow(x, -1, p)
-            ans %= p
-        return ans
+// 计算模意义下的逆元
+    long long mod_inverse(long long a, long long m) {
+        long long m0 = m, t, q;
+        long long x0 = 0, x1 = 1;
 
-    def lucas_iter(self, n, m, p):
-        # math.comb(n, m) % p where p is prime
-        if m == 0:
-            return 1
-        stack = [[n, m]]
-        dct = dict()
-        while stack:
-            n, m = stack.pop()
-            if n >= 0:
-                if m == 0:
-                    dct[(n, m)] = 1
-                    continue
-                stack.append([~n, m])
-                stack.append([n // p, m // p])
-            else:
-                n = ~n
-                dct[(n, m)] = (self.comb(n % p, m % p, p) % p) * dct[(n // p, m // p)] % p
-        return dct[(n, m)]
+        if (m == 1)
+            return 0;
 
-    @staticmethod
-    def extend_lucas(self, n, m, p):
-        # math.comb(n, m) % p where p is not necessary prime
-        return
+        // 使用扩展欧几里得算法来计算逆元
+        while (a > 1) {
+            // q 是 a/m 的商
+            q = a / m;
+
+            t = m;
+
+            // m 是 a%m
+            m = a % m, a = t;
+
+            t = x0;
+
+            // 更新 x0 为上一次 x1 - q * x0
+            x0 = x1 - q * x0;
+
+            x1 = t;
+        }
+
+        // 保证 x1 是正数
+        if (x1 < 0)
+            x1 += m0;
+
+        return x1;
+    }
+};
+
+
+// 计算 a 的 b 次幂模 m 的值
+long long fast_power_mod(long long a, long long b, long long m) {
+    long long result = 1;
+    a = a % m; // 对底数取模，避免整数溢出
+
+    while (b > 0) {
+        // 如果 b 是奇数，将当前的底数乘到结果中
+        if (b & 1) {
+            result = (result * a) % m;
+        }
+        // 将底数自乘，指数减半
+        a = (a * a) % m;
+        b >>= 1; // 等价于 b /= 2
+    }
+
+    return result;
+}

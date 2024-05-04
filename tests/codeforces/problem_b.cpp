@@ -1,118 +1,108 @@
 #include <iostream>
 #include <vector>
-#include <stack>
+#include <string>
 #include <algorithm>
 
-class Solution {
+#define ac FastIO
+
+
+class FastIO {
 public:
-    void solve() {
-        int n, k;
-        std::cin >> n >> k;
-
-        std::vector<std::vector<std::pair<int, int>>> dct(n);
-        for (int i = 1; i < n; i++) {
-            int x, y, z;
-            std::cin >> x >> y >> z;
-            x--;
-            y--;
-            dct[x].emplace_back(y, z);
-        }
-        for (int i = 0; i < n; i++) {
-            std::reverse(dct[i].begin(), dct[i].end());
-        }
-
-        if (n == 1) {
-            std::cout << 0 << std::endl;
-            return;
-        }
-
-        std::vector<int> dis(n);
-        std::stack<int> st;
-        st.push(0);
-        while (!st.empty()) {
-            int x = st.top();
-            st.pop();
-            for (auto [y, w]: dct[x]) {
-                dis[y] = dis[x] + w;
-                st.push(y);
-            }
-        }
-
-        int low = 0;
-        int high = 1000000000;
-
-        int ans = binarySearch(low, high, k, dis, dct);
-        std::cout << ans << std::endl;
+    static long long read_int() {
+        long long num;
+        std::cin >> num;
+        return num;
     }
 
-private:
-    int findHigh(const std::vector<std::vector<std::pair<int, int>>> &dct) {
-        std::stack<std::pair<int, int>> st;
-        int d = 0;
-        st.push({0, 0});
-        while (!st.empty()) {
-            auto [a, s] = st.top();
-            st.pop();
-            if (a >= 0) {
-                d += s;
-                st.push({~a, s});
-                for (auto [b, dd]: dct[a]) {
-                    st.push({b, dd});
-                }
-            } else {
-                d += s;
-            }
-        }
-        return d;
+    static float read_float() {
+        float num;
+        std::cin >> num;
+        return num;
     }
 
-    bool check(int t, int k, const std::vector<int> &dis, const std::vector<std::vector<std::pair<int, int>>> &dct) {
-        std::stack<std::pair<int, int>> st;
-        int d = 0;
-        int res = 0;
-        st.push({0, 0});
-        while (!st.empty()) {
-            auto [a, s] = st.top();
-            st.pop();
-            if (a >= 0) {
-                d += s;
-                st.push({~a, s});
-                for (auto [b, dd]: dct[a]) {
-                    st.push({b, dd});
-                }
-            } else {
-                a = ~a;
-                if (dct[a].empty()) {
-                    if (d + dis[a] > t) {
-                        res++;
-                        if (res + 1 > k) {
-                            return false;
-                        }
-                        d = dis[a];
-                    }
-                }
-                d += s;
-            }
+    static std::vector<long long> read_list_ints() {
+        long long n;
+        std::cin >> n;
+        std::vector<long long> nums(n);
+        for (long long i = 0; i < n; i++) {
+            std::cin >> nums[i];
         }
-        return true;
+        return nums;
     }
 
-    int binarySearch(int low, int high, int k, const std::vector<int> &dis,
-                     const std::vector<std::vector<std::pair<int, int>>> &dct) {
-        while (low < high - 1) {
-            int mid = low + (high - low) / 2;
-            if (check(mid, k, dis, dct)) {
-                high = mid;
-            } else {
-                low = mid;
-            }
+    static std::vector<long long> read_list_ints_minus_one() {
+        long long n;
+        std::cin >> n;
+        std::vector<long long> nums(n);
+        for (long long i = 0; i < n; i++) {
+            std::cin >> nums[i];
+            nums[i] -= 1;
         }
-        return check(low, k, dis, dct) ? low : high;
+        return nums;
+    }
+
+    static std::string read_str() {
+        std::string str;
+        std::cin >> str;
+        return str;
+    }
+
+    static std::vector<std::string> read_list_strs() {
+        long long n;
+        std::cin >> n;
+        std::vector<std::string> strs(n);
+        for (long long i = 0; i < n; i++) {
+            std::cin >> strs[i];
+        }
+        return strs;
+    }
+
+    static void st(long long x) {
+        std::cout << x << std::endl;
+    }
+
+    static void lst(const std::vector<long long> &x) {
+        for (long long num: x) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    static long long max(long long a, long long b) {
+        return (a > b) ? a : b;
+    }
+
+    static long long min(long long a, long long b) {
+        return (a < b) ? a : b;
+    }
+
+    static long long ceil(long long a, long long b) {
+        return a / b + (a % b != 0);
+    }
+
+    static long long floor(long long a, long long b) {
+        if (a > 0) {
+            return a / b;
+        }
+        long long res = a / b;
+        if (a % b) {
+            res--;
+        }
+        return res;
     }
 };
 
+
+
+class Solution {
+public:
+    static void main() {
+
+    }
+};
+
+
 int main() {
-    Solution solution;
-    solution.solve();
+    Solution::main();
     return 0;
 }
