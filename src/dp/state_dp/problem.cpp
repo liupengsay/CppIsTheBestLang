@@ -29,8 +29,8 @@ from src.utils.fast_io import FastIO
 1125. 最小的必要团队（https://leetcode.cn/problems/smallest-sufficient-team/）经典状压DP
 1467. 两个盒子中球的颜色数相同的概率（https://leetcode.cn/problems/probability-of-a-two-boxes-having-the-same-number-of-distinct-balls/）记忆化搜索与组合数学计数
 1531. 压缩字符串 II（https://leetcode.cn/problems/string-compression-ii/submissions/）线性DP模拟
-1595. 连通两组点的最小成本（https://leetcode.cn/problems/minimum-cost-to-connect-two-groups-of-points/）经典状压DP，需要一点变形
-1655. 分配重复整数（https://leetcode.cn/problems/distribute-repeating-integers/）经典状压 DP
+1595. 连通两组点的最小成本（https://leetcode.cn/problems/minimum-cost-to-connect-two-groups-of-Points/）经典状压DP，需要一点变形
+1655. 分配重复整数（https://leetcode.cn/problems/distribute-repeating-long longegers/）经典状压 DP
 1879. 两个数组最小的异或值之和（https://leetcode.cn/problems/minimum-xor-sum-of-two-arrays/）经典状压 DP
 2019. 解出数学表达式的学生分数（https://leetcode.cn/problems/the-score-of-students-solving-math-expression/）经典记忆化DP，可以使用刷表法与填表法迭代实现
 943. 最短超级串（https://leetcode.cn/problems/find-the-shortest-superstring/）字符串贪心最短长度拼接状压DP
@@ -39,7 +39,7 @@ from src.utils.fast_io import FastIO
 2741. 特别的排列（https://leetcode.cn/problems/special-permutations/description/）经典状压DP
 2305. 公平分发饼干（https://leetcode.cn/problems/fair-distribution-of-cookies/description/）典型状压DP枚举子集
 980. 不同路径 III（https://leetcode.cn/problems/unique-paths-iii/description/）典型状压DP或者回溯
-2571. 将整数减少到零需要的最少操作数（https://leetcode.cn/problems/minimum-operations-to-reduce-an-integer-to-0/description/）思维题记忆化DP
+2571. 将整数减少到零需要的最少操作数（https://leetcode.cn/problems/minimum-operations-to-reduce-an-long longeger-to-0/description/）思维题记忆化DP
 
 ===================================洛谷===================================
 P1896 互不侵犯（https://www.luogu.com.cn/problem/P1896）按行状态与行个数枚举所有的摆放可能性
@@ -72,11 +72,11 @@ F. Three Paths on a Tree（https://codeforces.com/contest/1294/problem/F）典�
 
 
 class Solution:
-    def __int__(self):
+    def __long long__(self):
         return
 
     @staticmethod
-    def lc_1681(nums: List[int], k: int) -> int:
+    def lc_1681(nums: List[long long], k: long long) -> long long:
         # 模板：状态压缩和组合数选取结合使用
 
         @lru_cache(None)
@@ -113,7 +113,7 @@ class Solution:
         return ans if ans < inf else -1
 
     @staticmethod
-    def lc_1723(jobs: List[int], k: int) -> int:
+    def lc_1723(jobs: List[long long], k: long long) -> long long:
         # 模板：通过位运算枚举分配工作DP最小化的最大值，枚举子集预处理
 
         @lru_cache(None)
@@ -144,7 +144,7 @@ class Solution:
         return dfs(0, (1 << n) - 1)
 
     @staticmethod
-    def lc_1879_1(nums1: List[int], nums2: List[int]) -> int:
+    def lc_1879_1(nums1: List[long long], nums2: List[long long]) -> long long:
 
         # 模板：经典记忆化深搜状压DP写法
 
@@ -164,7 +164,7 @@ class Solution:
         return dfs(0, (1 << n) - 1)
 
     @staticmethod
-    def lc_1879_2(nums1: List[int], nums2: List[int]) -> int:
+    def lc_1879_2(nums1: List[long long], nums2: List[long long]) -> long long:
         # 模板：经典状压DP迭代写法，刷表法
         n = len(nums1)
         s = sum(nums1) + sum(nums2)
@@ -179,7 +179,7 @@ class Solution:
         return dp[-1]
 
     @staticmethod
-    def lc_1879_3(nums1: List[int], nums2: List[int]) -> int:
+    def lc_1879_3(nums1: List[long long], nums2: List[long long]) -> long long:
         # 模板：经典状压DP迭代写法，填表法
         n = len(nums1)
         s = sum(nums1) + sum(nums2)
@@ -196,8 +196,8 @@ class Solution:
     @staticmethod
     def cf_165e(ac=FastIO()):
         # 模板：线性状态压缩DP，类似子集思想求解可能存在的与为0的数对
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         ceil = max(nums).bit_length()
         dp = [-1] * (1 << ceil)
         for num in nums:
@@ -222,13 +222,13 @@ class Solution:
     def cf_580d(ac):
 
         # 模板：bitmask位运算状态压缩转移，从 1 少的状态向多的转移，并枚举前一个 1 的位置计算增益
-        n, m, k = ac.read_list_ints()
+        n, m, k = ac.read_list_long longs()
         ind = {1 << i: i for i in range(n + 1)}
-        nums = ac.read_list_ints()
+        nums = ac.read_list_long longs()
         dp = [[0] * (n + 1) for _ in range(1 << n)]
         edge = [[0] * (n + 1) for _ in range(n + 1)]
         for _ in range(k):
-            x, y, c = ac.read_list_ints()
+            x, y, c = ac.read_list_long longs()
             x -= 1
             y -= 1
             edge[x][y] = c
@@ -251,7 +251,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_847(graph: List[List[int]]) -> int:
+    def lc_847(graph: List[List[long long]]) -> long long:
         # 模板：经典最短路Floyd或者Dijkstra预处理最短路加状压DP
         n = len(graph)
         dis = [[inf] * n for _ in range(n)]
@@ -276,14 +276,14 @@ class Solution:
         return min(dp[-1])
 
     @staticmethod
-    def lc_1349(seats: List[List[str]]) -> int:
+    def lc_1349(seats: List[List[str]]) -> long long:
 
         # 模板：经典考试就座状态压缩 DP
 
         lst = []
         for se in seats:
             st = "".join(["0" if x == "." else "1" for x in se])
-            lst.append(int("0b" + st, 2))
+            lst.append(long long("0b" + st, 2))
 
         @lru_cache(None)
         def dfs(state, i):
@@ -314,7 +314,7 @@ class Solution:
         return dfs(lst[0], 0)
 
     @staticmethod
-    def lc_1434_1(hats: List[List[int]]) -> int:
+    def lc_1434_1(hats: List[List[long long]]) -> long long:
         # 模板：经典状压DP逆向思维，记忆化实现
         mod = 10 ** 9 + 7
         n = len(hats)
@@ -339,7 +339,7 @@ class Solution:
         return dfs((1 << n) - 1, 0)
 
     @staticmethod
-    def lc_1434_2(hats: List[List[int]]) -> int:
+    def lc_1434_2(hats: List[List[long long]]) -> long long:
         # 模板：经典状压DP逆向思维，填表法迭代实现
         mod = 10 ** 9 + 7
         n = len(hats)
@@ -361,7 +361,7 @@ class Solution:
         return dp[-1][-1]
 
     @staticmethod
-    def lc_2403_1(power: List[int]) -> int:
+    def lc_2403_1(power: List[long long]) -> long long:
         # 模板：状态压缩DP数组形式
         m = len(power)
         dp = [0] * (1 << m)
@@ -376,7 +376,7 @@ class Solution:
         return dp[-1]
 
     @staticmethod
-    def lc_2403_2(power: List[int]) -> int:
+    def lc_2403_2(power: List[long long]) -> long long:
         # 模板：状态压缩DP记忆化形式
 
         @lru_cache(None)

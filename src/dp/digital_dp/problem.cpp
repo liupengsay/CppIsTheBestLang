@@ -13,15 +13,15 @@ from src.utils.fast_io import FastIO
 ===================================力扣===================================
 233. 数字 1 的个数（https://leetcode.cn/problems/number-of-digit-one/）数字 1 的个数
 357. 统计各位数字都不同的数字个数（https://leetcode.cn/problems/count-numbers-with-unique-digits/）排列组合也可用数位 DP 求解
-600. 不含连续 1 的非负整数（https://leetcode.cn/problems/non-negative-integers-without-consecutive-ones/）不含连续 1 的非负整数
+600. 不含连续 1 的非负整数（https://leetcode.cn/problems/non-negative-long longegers-without-consecutive-ones/）不含连续 1 的非负整数
 902. 最大为 N 的数字组合（https://leetcode.cn/problems/numbers-at-most-n-given-digit-set/）限定字符情况下小于等于 n 的个数
 1012. 至少有 1 位重复的数字（https://leetcode.cn/problems/numbers-with-repeated-digits/）容斥原理计算没有重复数字的个数
 1067. 范围内的数字计数（https://leetcode.cn/problems/digit-count-in-range/）计算区间计数，使用右端点减去左端点，数位DP容斥模板题
 1397. 找到所有好字符串（https://leetcode.cn/problems/find-all-good-strings/）使用数位DP思想进行模拟
-2376. 统计特殊整数（https://leetcode.cn/problems/count-special-integers/）计算小于 n 的特殊正整数个数
-2719. 统计整数数目（https://leetcode.cn/problems/count-of-integers/）数位DP容斥模板题
+2376. 统计特殊整数（https://leetcode.cn/problems/count-special-long longegers/）计算小于 n 的特殊正整数个数
+2719. 统计整数数目（https://leetcode.cn/problems/count-of-long longegers/）数位DP容斥模板题
 2801. 统计范围内的步进数字数目（https://leetcode.cn/problems/count-stepping-numbers-in-range/）数位DP容斥模板题
-2827. 范围中美丽整数的数目（https://leetcode.cn/problems/number-of-beautiful-integers-in-the-range/）数位DP容斥模板题
+2827. 范围中美丽整数的数目（https://leetcode.cn/problems/number-of-beautiful-long longegers-in-the-range/）数位DP容斥模板题
 
 
 面试题 17.06. 2出现的次数（https://leetcode.cn/problems/number-of-2s-in-range-lcci/）所有数位出现 2 的次数
@@ -63,9 +63,9 @@ class Solution:
                     res += dfs(i + 1, 0, False, False)
 
                 floor = 0 if is_num else 1
-                ceil = int(s[i]) if is_limit else 9
+                ceil = long long(s[i]) if is_limit else 9
                 for x in range(floor, ceil + 1):
-                    res += dfs(i + 1, cnt + int(i == d and x == 1),
+                    res += dfs(i + 1, cnt + long long(i == d and x == 1),
                                is_limit and ceil == x, True)
                 return res
 
@@ -81,7 +81,7 @@ class Solution:
                     ans += 1 << (n - d - 1)
             return ans
 
-        a, b = ac.read_list_ints()
+        a, b = ac.read_list_long longs()
         ac.st(count(b) ^ count(a - 1))
         return
 
@@ -92,12 +92,12 @@ class Solution:
         @lru_cache(None)
         def dfs(i, is_limit, is_num, pre):
             if i == m:
-                return int(is_num) and pre <= k
+                return long long(is_num) and pre <= k
             res = 0
             if not is_num:
                 res += dfs(i + 1, False, False, 0)
             low = 0 if is_num else 1
-            high = int(st[i]) if is_limit else 9
+            high = long long(st[i]) if is_limit else 9
             for x in range(low, high + 1):
                 y = pre * x if is_num else x
                 if y > k:
@@ -105,7 +105,7 @@ class Solution:
                 res += dfs(i + 1, is_limit and high == x, True, y)
             return res
 
-        n, k = ac.read_list_ints()
+        n, k = ac.read_list_long longs()
         st = str(n)
         m = len(st)
         ans = dfs(0, True, False, 0)
@@ -113,14 +113,14 @@ class Solution:
         return
 
     @staticmethod
-    def lc_233(n: int) -> int:
+    def lc_233(n: long long) -> long long:
         # 模板：计算 0 到 n 有数位 1 的出现次数
         if not n:
             return 0
         return DigitalDP().count_digit(n, 1)
 
     @staticmethod
-    def lc_2719(num1: str, num2: str, min_sum: int, max_sum: int) -> int:
+    def lc_2719(num1: str, num2: str, min_sum: long long, max_sum: long long) -> long long:
         # 模板：数位DP容斥模板题
 
         def check(num):
@@ -135,7 +135,7 @@ class Solution:
                 if not is_num:
                     res += dfs(i + 1, 0, False, False)
                 floor = 0 if is_num else 1
-                ceil = int(s[i]) if is_limit else 9
+                ceil = long long(s[i]) if is_limit else 9
                 for x in range(floor, ceil + 1):
                     if cnt + x <= max_sum:
                         res += dfs(i + 1, cnt + x, is_limit and ceil == x, True)
@@ -149,12 +149,12 @@ class Solution:
             return ans
 
         mod = 10 ** 9 + 7
-        num2 = int(num2)
-        num1 = int(num1)
+        num2 = long long(num2)
+        num1 = long long(num1)
         return (check(num2) - check(num1 - 1)) % mod
 
     @staticmethod
-    def lc_2801(low: str, high: str) -> int:
+    def lc_2801(low: str, high: str) -> long long:
         # 模板：数位DP容斥模板题
 
         def check(num):
@@ -167,7 +167,7 @@ class Solution:
                     res += dfs(i + 1, False, 0, -1)
 
                 floor = 0 if is_num else 1
-                ceil = int(s[i]) if is_limit else 9
+                ceil = long long(s[i]) if is_limit else 9
                 for x in range(floor, ceil + 1):
                     if pre == -1 or abs(x - pre) == 1:
                         res += dfs(i + 1, is_limit and ceil == x, 1, x)
@@ -178,10 +178,10 @@ class Solution:
             return dfs(0, True, 0, -1)
 
         mod = 10 ** 9 + 7
-        return (check(int(high)) - check(int(low) - 1)) % mod
+        return (check(long long(high)) - check(long long(low) - 1)) % mod
 
     @staticmethod
-    def lc_2827(low: int, high: int, k: int) -> int:
+    def lc_2827(low: long long, high: long long, k: long long) -> long long:
         # 模板：数位DP容斥模板题
 
         def check(num):
@@ -194,7 +194,7 @@ class Solution:
                     res += dfs(i + 1, False, 0, 0, 0)
 
                 floor = 0 if is_num else 1
-                ceil = int(s[i]) if is_limit else 9
+                ceil = long long(s[i]) if is_limit else 9
                 for x in range(floor, ceil + 1):
                     res += dfs(i + 1, is_limit and ceil == x, 1, odd + 1 if x % 2 == 0 else odd - 1,
                                (rest * 10 + x) % k)
@@ -209,7 +209,7 @@ class Solution:
     @staticmethod
     def lg_p1836(ac=FastIO()):
         # 模板：数位DP计算1~n内所有数字的数位和
-        n = ac.read_int()
+        n = ac.read_long long()
         ans = 0
         for d in range(1, 10):
             ans += d * DigitalDP().count_digit_iteration(n, d)
@@ -217,7 +217,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_1067(d: int, low: int, high: int) -> int:
+    def lc_1067(d: long long, low: long long, high: long long) -> long long:
         # 模板：计算区间计数，使用右端点减去左端点，数位DP容斥模板题
         dd = DigitalDP()
         return dd.count_digit(high, d) - dd.count_digit(low - 1, d)

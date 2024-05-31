@@ -39,9 +39,9 @@ class Solution:
     @staticmethod
     def lg_p1280(ac=FastIO()):
         # 模板：博弈 DP 下的必胜策略分析
-        n = ac.read_int()
+        n = ac.read_long long()
         for _ in range(n):
-            x, y = ac.read_list_ints()
+            x, y = ac.read_list_long longs()
 
             @lru_cache(None)
             def dfs(a, b):
@@ -66,8 +66,8 @@ class Solution:
     @staticmethod
     def lg_1247(ac=FastIO()):
         # 模板：nim博弈，使用异或求解
-        k = ac.read_int()
-        nums = ac.read_list_ints()
+        k = ac.read_long long()
+        nums = ac.read_list_long longs()
         x = reduce(xor, nums)
         if x == 0:
             ac.st("lose")
@@ -117,8 +117,8 @@ class Solution:
             if (cur[0], cur[1], cur[2]) in dct and not dp[(cur[0], cur[1], cur[2])]:
                 dp[(yy, mm, dd)] = True
 
-        for _ in range(ac.read_int()):
-            x, y, z = ac.read_list_ints()
+        for _ in range(ac.read_long long()):
+            x, y, z = ac.read_list_long longs()
             ac.st("YES" if dp.get((x, y, z), True) else "NO")
 
         return
@@ -126,7 +126,7 @@ class Solution:
     @staticmethod
     def lg_p2092(ac=FastIO()):
         # 模板：根据质数的个数来判断必胜态
-        n = ac.read_int()
+        n = ac.read_long long()
         lst = NumberTheory().get_prime_factor(n)
         nums = []
         for p, c in lst:
@@ -151,11 +151,11 @@ class Solution:
             lst = [w for w in str(i) if w != "0"]
             lst.sort()
             for w in [lst[0], lst[-1]]:
-                if not dp[i - int(w)]:
+                if not dp[i - long long(w)]:
                     dp[i] = 1
                     break
-        for _ in range(ac.read_int()):
-            if dp[ac.read_int()]:
+        for _ in range(ac.read_long long()):
+            if dp[ac.read_long long()]:
                 ac.st("YES")
             else:
                 ac.st("NO")

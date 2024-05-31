@@ -61,7 +61,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_2542(nums1: List[int], nums2: List[int], k: int) -> int:
+    def lc_2542(nums1: List[long long], nums2: List[long long], k: long long) -> long long:
         # 模板：经典排序后枚举使用堆维护K最大的和，类似LC857
         n = len(nums1)
         ind = list(range(n))
@@ -80,7 +80,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2462(costs: List[int], k: int, candidates: int) -> int:
+    def lc_2462(costs: List[long long], k: long long, candidates: long long) -> long long:
         # 模板：使用堆进行贪心模拟
         n = len(costs)
         visit = [0]*n
@@ -120,7 +120,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2813(items: List[List[int]], k: int) -> int:
+    def lc_2813(items: List[List[long long]], k: long long) -> long long:
         # 模板：经典思维题排序后枚举，维护长度为k的子序列最大函数值
         items.sort(reverse=True)
         ans = cnt = pre = tp = 0
@@ -145,7 +145,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_1705(apples: List[int], days: List[int]) -> int:
+    def lc_1705(apples: List[long long], days: List[long long]) -> long long:
         # 模板：使用堆进行贪心模拟
         n = len(apples)
         ans = i = 0
@@ -162,7 +162,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2197(nums: List[int]) -> List[int]:
+    def lc_2197(nums: List[long long]) -> List[long long]:
         # 模板：栈结合 gcd 与 lcm 进行模拟计算
         stack = []
         for num in nums:
@@ -177,7 +177,7 @@ class Solution:
         return stack
 
     @staticmethod
-    def lc_857(quality: List[int], wage: List[int], k: int) -> float:
+    def lc_857(quality: List[long long], wage: List[int], k: int) -> float:
         # 模板：经典贪心排序枚举，使用堆维护K个最小值的和
         n = len(quality)
         ind = list(range(n))

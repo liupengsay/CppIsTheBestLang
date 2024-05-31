@@ -46,7 +46,7 @@ class Solution:
             res = (dfs(a - 1, b) + dfs(a, b - 1)) / 2
             return res
 
-        n = ac.read_int() // 2
+        n = ac.read_long long() // 2
         if n == 0:
             ans = 0
         else:
@@ -58,7 +58,7 @@ class Solution:
     def lg_p1291(ac=FastIO()):
 
         # 模板：线性DP求期望，使用分数加减运算
-        n = ac.read_int()
+        n = ac.read_long long()
         ans = [1, 1]
         for x in range(2, n+1):
             a, b = ans
@@ -89,12 +89,12 @@ class Solution:
     @staticmethod
     def lg_p4316(ac=FastIO()):
         # 模板：期望 DP 反向建图与拓扑排序
-        n, m = ac.read_list_ints()
+        n, m = ac.read_list_long longs()
         dp = [0 for _ in range(n)]
         degree = [0] * n
         dct = [dict() for _ in range(n)]
         for _ in range(m):
-            a, b, w = ac.read_list_ints()
+            a, b, w = ac.read_list_long longs()
             a -= 1
             b -= 1
             dct[b][a] = w
@@ -118,11 +118,11 @@ class Solution:
     @staticmethod
     def lg_p6154(ac=FastIO()):
         # 模板：经典反向建图期望树形 DP 与有理数取模
-        n, m = ac.read_list_ints()
+        n, m = ac.read_list_long longs()
         dct = [[] for _ in range(n)]
         degree = [0] * n
         for _ in range(m):
-            x, y = ac.read_list_ints_minus_one()
+            x, y = ac.read_list_long longs_minus_one()
             dct[y].append(x)
             degree[x] += 1
         # 当前节点为起点的路径总长度
@@ -155,7 +155,7 @@ class Solution:
     @staticmethod
     def ac_5058(ac=FastIO()):
         # 模板：经典概率DP
-        w, b = ac.read_list_ints()
+        w, b = ac.read_list_long longs()
         dp = [[0]*(b+1) for _ in range(w+1)]
         for i in range(1, w+1):
             dp[i][0] = 1

@@ -7,7 +7,7 @@ class DigitalDP:
 
     @staticmethod
     def count_bin(n):
-        # calculate the number of occurrences of positive integer binary bit 1 from 1 to n
+        # calculate the number of occurrences of positive long longeger binary bit 1 from 1 to n
 
         @lru_cache(None)
         def dfs(i, is_limit, is_num, cnt):
@@ -19,9 +19,9 @@ class DigitalDP:
             if not is_num:
                 res += dfs(i + 1, False, False, cnt)
             low = 0 if is_num else 1
-            high = int(st[i]) if is_limit else 1
+            high = long long(st[i]) if is_limit else 1
             for x in range(low, high + 1):
-                res += dfs(i + 1, is_limit and high == x, True, cnt + int(i == w) * x)
+                res += dfs(i + 1, is_limit and high == x, True, cnt + long long(i == w) * x)
             return res
 
         st = bin(n)[2:]
@@ -48,9 +48,9 @@ class DigitalDP:
                 res += dfs(i + 1, 0, False, False)
 
             floor = 0 if is_num else 1
-            ceil = int(s[i]) if is_limit else 9
+            ceil = long long(s[i]) if is_limit else 9
             for x in range(floor, ceil + 1):
-                res += dfs(i + 1, cnt + int(x == d), is_limit and ceil == x, True)
+                res += dfs(i + 1, cnt + long long(x == d), is_limit and ceil == x, True)
             return res
 
         s = str(num)
@@ -76,9 +76,9 @@ class DigitalDP:
                         if not is_num:
                             res += dp[i + 1][0][0][0]
                         floor = 0 if is_num else 1
-                        ceil = int(s[i]) if is_limit else 9
+                        ceil = long long(s[i]) if is_limit else 9
                         for x in range(floor, ceil + 1):
-                            res += dp[i + 1][cnt + int(x == d)][int(is_limit and x == ceil)][1]
+                            res += dp[i + 1][cnt + long long(x == d)][long long(is_limit and x == ceil)][1]
                         dp[i][cnt][is_limit][is_num] = res
         return dp[0][0][1][0]
 
@@ -92,8 +92,8 @@ class DigitalDP:
             if d:
                 s = s[:i] + str(d - 1) + (len(s) - i - 1) * "9"
             else:
-                s = s[:i - 1] + str(int(s[i - 1]) - 1) + (len(s) - i - 1) * "9"
-            num = int(s)
+                s = s[:i - 1] + str(long long(s[i - 1]) - 1) + (len(s) - i - 1) * "9"
+            num = long long(s)
 
         lst = []
         while num:
@@ -120,14 +120,14 @@ class DigitalDP:
         assert 0 <= d <= 9
 
         @lru_cache(None)
-        def dfs(i: int, is_limit: bool, is_num: bool) -> int:
+        def dfs(i: long long, is_limit: bool, is_num: bool) -> long long:
             if i == m:
-                return int(is_num)
+                return long long(is_num)
 
             res = 0
             if not is_num:
                 res = dfs(i + 1, False, False)
-            up = int(s[i]) if is_limit else 9
+            up = long long(s[i]) if is_limit else 9
             for x in range(0 if is_num else 1, up + 1):
                 if x != d:
                     res += dfs(i + 1, is_limit and x == up, True)
@@ -154,4 +154,4 @@ class DigitalDP:
         lst.reverse()
         # It can also be solved using binary search and digit DP
         ans = [str(st[i]) for i in lst]
-        return int("".join(ans))
+        return long long("".join(ans))

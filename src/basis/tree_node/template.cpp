@@ -13,7 +13,7 @@ class TreeOrder:
         return
 
     @staticmethod
-    def post_order(root: Optional[TreeNode]) -> List[int]:
+    def post_order(root: Optional[TreeNode]) -> List[long long]:
         ans = []
         stack = [[root, 1]] if root else []
         while stack:
@@ -29,7 +29,7 @@ class TreeOrder:
         return ans
 
     @staticmethod
-    def pre_order(root: Optional[TreeNode]) -> List[int]:
+    def pre_order(root: Optional[TreeNode]) -> List[long long]:
         ans = []
         stack = [[root, 1]] if root else []
         while stack:
@@ -45,7 +45,7 @@ class TreeOrder:
         return ans
 
     @staticmethod
-    def in_order(root: Optional[TreeNode]) -> List[int]:
+    def in_order(root: Optional[TreeNode]) -> List[long long]:
         ans = []
         stack = [[root, 1]] if root else []
         while stack:

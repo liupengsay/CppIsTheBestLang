@@ -9,20 +9,20 @@ using namespace std;
 class TestGeneral {
 public:
     static void BinarySearchTest() {
-        std::vector<int> nums = {1, 2, 2, 2, 3, 4};
-        int low = 0;
+        std::vector<long long> nums = {1, 2, 2, 2, 3, 4};
+        long long low = 0;
         size_t high = nums.size() - 1;
 
         // 整数二分测试
-        auto check_left = [&](int x) -> bool {
+        auto check_left = [&](long long x) -> bool {
             return nums[x] >= 2;
         };
-        assert(BinarySearch::find_int_left(low, high, check_left) == 1);
+        assert(BinarySearch::find_long long_left(low, high, check_left) == 1);
 
-        auto check_right = [&](int x) -> bool {
+        auto check_right = [&](long long x) -> bool {
             return nums[x] <= 2;
         };
-        assert(BinarySearch::find_int_right(low, high, check_right) == 3);
+        assert(BinarySearch::find_long long_right(low, high, check_right) == 3);
 
 
         double low_double = 0.0;

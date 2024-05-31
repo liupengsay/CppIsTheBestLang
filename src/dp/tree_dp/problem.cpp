@@ -63,7 +63,7 @@ P3304 [SDOI2013]直径（https://www.luogu.com.cn/problem/P3304）经典计算�
 P3408 恋爱（https://www.luogu.com.cn/problem/P3408）树形DP
 P3478 [POI2008] STA-Station（https://www.luogu.com.cn/problem/P3478）树的质心
 P3931 SAC E#1 - 一道难题 Tree（https://www.luogu.com.cn/problem/P3931）典型树形DP
-P4084 [USACO17DEC]Barn Painting G（https://www.luogu.com.cn/problem/P4084）典型树形DP
+P4084 [USACO17DEC]Barn Palong longing G（https://www.luogu.com.cn/problem/P4084）典型树形DP
 P4395 [BOI2003]Gem 气垫车（https://www.luogu.com.cn/problem/P4395）经典树形 DP 贪心标权值使得整棵树总价值最小
 P5765 [CQOI2005]珠宝（https://www.luogu.com.cn/problem/P5765）同P4395
 P8602 [蓝桥杯 2013 省 A] 大臣的旅费（https://www.luogu.com.cn/problem/P8602）经典树的直径可用两遍BFS也可用树形DP求解
@@ -78,7 +78,7 @@ D. Distance in Tree（https://codeforces.com/problemset/problem/161/D）树形DP
 C. Uncle Bogdan and Country Happiness（https://codeforces.com/problemset/problem/1388/C）树形DP模拟计算，递归获取子树信息，逆向从上往下还原
 F. Maximum White Subtree（https://codeforces.com/problemset/problem/1324/F）经典换根DP题，两遍dfs搜索更新计算
 D. Book of Evil（https://codeforces.com/problemset/problem/337/D）经典换根DP题，两遍dfs搜索更新计算
-E. Tree Painting（https://codeforces.com/problemset/problem/1187/E）经典换根DP题，两遍dfs搜索更新计算
+E. Tree Palong longing（https://codeforces.com/problemset/problem/1187/E）经典换根DP题，两遍dfs搜索更新计算
 E. Lomsat gelral（https://codeforces.com/problemset/problem/600/E）迭代方式写深搜序，按秩合并，由小到大
 D. A Wide, Wide Graph（https://codeforces.com/problemset/problem/1805/D）树的直径计算，任意点到直径的某个端点的距离最长
 G. White-Black Balanced Subtrees（https://codeforces.com/contest/1676/problem/G）使用迭代的方式进行树形DP计算
@@ -102,9 +102,9 @@ class Solution:
     @staticmethod
     def cf_1676g(ac=FastIO()):
         # 模板：使用迭代的方式计算树形DP
-        for _ in range(ac.read_int()):
-            n = ac.read_int()
-            parent = ac.read_list_ints_minus_one()
+        for _ in range(ac.read_long long()):
+            n = ac.read_long long()
+            parent = ac.read_list_long longs_minus_one()
             color = ac.read_str()
             dct = [[] for _ in range(n)]
             for i in range(n - 1):
@@ -129,7 +129,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_2003(parents: List[int], nums: List[int]) -> List[int]:
+    def lc_2003(parents: List[long long], nums: List[long long]) -> List[long long]:
         # heuristic merging from bottom to up
         n = len(nums)
         dct = [[] for _ in range(n)]
@@ -164,7 +164,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2458(root, queries: List[int]) -> List[int]:
+    def lc_2458(root, queries: List[long long]) -> List[long long]:
         # 模板：经典类似换根 DP 的思想跑两遍 DFS
         def dfs(node, d):
             if not node:
@@ -211,12 +211,12 @@ class Solution:
 
     @staticmethod
     def cf_1388c(ac):
-        n, m = ac.read_list_ints()
-        person = ac.read_list_ints()
-        h = ac.read_list_ints()
+        n, m = ac.read_list_long longs()
+        person = ac.read_list_long longs()
+        h = ac.read_list_long longs()
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            x, y = ac.read_list_ints_minus_one()
+            x, y = ac.read_list_long longs_minus_one()
             edge[x].append(y)
             edge[y].append(x)
 
@@ -282,11 +282,11 @@ class Solution:
     def cf_1324f(ac=FastIO()):
 
         # 模板：换根DP，根据题意进行转换贪心计算结果
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            x, y = ac.read_list_ints_minus_one()
+            x, y = ac.read_list_long longs_minus_one()
             edge[x].append(y)
             edge[y].append(x)
 
@@ -326,11 +326,11 @@ class Solution:
 
     @staticmethod
     def cf_337d(ac=FastIO()):
-        n, m, d = ac.read_list_ints()
-        evil = set(ac.read_list_ints_minus_one())
+        n, m, d = ac.read_list_long longs()
+        evil = set(ac.read_list_long longs_minus_one())
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            u, v = ac.read_list_ints_minus_one()
+            u, v = ac.read_list_long longs_minus_one()
             edge[u].append(v)
             edge[v].append(u)
 
@@ -386,11 +386,11 @@ class Solution:
     @staticmethod
     def cf_1092f(ac=FastIO()):
         # 模板：带权重树中的总距离，迭代法实现树形换根DP计算
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         dct = [[] for _ in range(n)]
         for _ in range(n - 1):
-            x, y = ac.read_list_ints_minus_one()
+            x, y = ac.read_list_long longs_minus_one()
             dct[x].append(y)
             dct[y].append(x)
         ans = ReRootDP().get_tree_distance_weight(dct, nums)
@@ -398,7 +398,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_968(root: Optional[TreeNode]) -> int:
+    def lc_968(root: Optional[TreeNode]) -> long long:
 
         # 模板：经典树形DP
         def dfs(node):
@@ -437,10 +437,10 @@ class Solution:
     @staticmethod
     def cf_1187e(ac=FastIO()):
         # 模板：经典换根DP题计算最佳结果
-        n = ac.read_int()
+        n = ac.read_long long()
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            u, v = ac.read_list_ints_minus_one()
+            u, v = ac.read_list_long longs_minus_one()
             edge[u].append(v)
             edge[v].append(u)
 
@@ -476,11 +476,11 @@ class Solution:
     @staticmethod
     def cf_600e_bfs(ac=FastIO()):
         # 模板：自下而上递归的迭代写法，从小到大按秩合并
-        n = ac.read_int()
-        colors = ac.read_list_ints()
+        n = ac.read_long long()
+        colors = ac.read_list_long longs()
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            i, j = ac.read_list_ints_minus_one()
+            i, j = ac.read_list_long longs_minus_one()
             edge[i].append(j)
             edge[j].append(i)
         # 深搜序自下而上以及父子信息获取
@@ -528,11 +528,11 @@ class Solution:
     @staticmethod
     def cf_600e_dfs(ac=FastIO()):
         # 模板：自下而上递归的递归写法，从小到大按秩合并
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         edge = [[] for _ in range(n)]
         for _ in range(n - 1):
-            u, v = ac.read_list_ints_minus_one()
+            u, v = ac.read_list_long longs_minus_one()
             edge[u].append(v)
             edge[v].append(u)
 
@@ -570,7 +570,7 @@ class Solution:
     @staticmethod
     def lg_p1395_1(ac=FastIO()):
         # 模板：计算树的重心为最大子树节点数最小
-        n = ac.read_int()
+        n = ac.read_long long()
         dct = [[] for _ in range(n)]
         for _ in range(n - 1):
             i, j = ac.read_list_ints()

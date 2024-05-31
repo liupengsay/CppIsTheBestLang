@@ -6,8 +6,8 @@
 class FastIO {
 public:
     // 读取一个整数
-    static int read_int() {
-        int x;
+    static long long read_long long() {
+        long long x;
         std::cin >> x;
         return x;
     }
@@ -20,12 +20,12 @@ public:
     }
 
     // 读取一行整数列表
-    static std::vector<int> read_list_ints() {
+    static std::vector<long long> read_list_long longs() {
         std::string line;
         std::getline(std::cin, line);
         std::stringstream ss(line);
-        std::vector<int> nums;
-        int x;
+        std::vector<long long> nums;
+        long long x;
         while (ss >> x) {
             nums.push_back(x);
         }
@@ -46,12 +46,12 @@ public:
     }
 
     // 读取一行整数列表，每个数减一
-    static std::vector<int> read_ints_minus_one() {
+    static std::vector<long long> read_long longs_minus_one() {
         std::string line;
         std::getline(std::cin, line);
         std::stringstream ss(line);
-        std::vector<int> nums;
-        int x;
+        std::vector<long long> nums;
+        long long x;
         while (ss >> x) {
             nums.push_back(x - 1);
         }
@@ -93,8 +93,8 @@ public:
     }
 
     // 输出一行整数列表
-    static void lst(const std::vector<int>& nums) {
-        for (int i = 0; i < nums.size(); i++) {
+    static void lst(const std::vector<long long>& nums) {
+        for (long long i = 0; i < nums.size(); i++) {
             std::cout << nums[i];
             if (i < nums.size() - 1) {
                 std::cout << " ";
@@ -105,7 +105,7 @@ public:
 
     // 输出一行浮点数列表
     static void lst(const std::vector<double>& nums) {
-        for (int i = 0; i < nums.size(); i++) {
+        for (long long i = 0; i < nums.size(); i++) {
             std::cout << nums[i];
             if (i < nums.size() - 1) {
                 std::cout << " ";
@@ -115,8 +115,8 @@ public:
     }
 
     // 将浮点数四舍五入到最近的整数
-    static int round_5(double x) {
-        int res = static_cast<int>(x);
+    static long long round_5(double x) {
+        long long res = static_cast<long long>(x);
         if (x - res >= 0.5) {
             res += 1;
         }
@@ -139,10 +139,10 @@ public:
 
 int main() {
     // 读取一个整数
-    int n = FastIO::read_int();
+    long long n = FastIO::read_long long();
 
     // 读取一行整数列表
-    std::vector<int> nums = FastIO::read_list_ints();
+    std::vector<long long> nums = FastIO::read_list_long longs();
 
     // 输出结果
     FastIO::st(n);

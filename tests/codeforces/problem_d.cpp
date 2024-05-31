@@ -1,108 +1,83 @@
+
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+#include <unordered_map>
 #include <algorithm>
 
-#define ac FastIO
-
-
-class FastIO {
-public:
-    static long long read_int() {
-        long long num;
-        std::cin >> num;
-        return num;
-    }
-
-    static float read_float() {
-        float num;
-        std::cin >> num;
-        return num;
-    }
-
-    static std::vector<long long> read_list_ints() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
-        }
-        return nums;
-    }
-
-    static std::vector<long long> read_list_ints_minus_one() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
-            nums[i] -= 1;
-        }
-        return nums;
-    }
-
-    static std::string read_str() {
-        std::string str;
-        std::cin >> str;
-        return str;
-    }
-
-    static std::vector<std::string> read_list_strs() {
-        long long n;
-        std::cin >> n;
-        std::vector<std::string> strs(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> strs[i];
-        }
-        return strs;
-    }
-
-    static void st(long long x) {
-        std::cout << x << std::endl;
-    }
-
-    static void lst(const std::vector<long long> &x) {
-        for (long long num: x) {
-            std::cout << num << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    static long long max(long long a, long long b) {
-        return (a > b) ? a : b;
-    }
-
-    static long long min(long long a, long long b) {
-        return (a < b) ? a : b;
-    }
-
-    static long long ceil(long long a, long long b) {
-        return a / b + (a % b != 0);
-    }
-
-    static long long floor(long long a, long long b) {
-        if (a > 0) {
-            return a / b;
-        }
-        long long res = a / b;
-        if (a % b) {
-            res--;
-        }
-        return res;
-    }
-};
-
-
-
-class Solution {
-public:
-    static void main() {
-
-    }
-};
-
+using namespace std;
 
 int main() {
-    Solution::main();
+    int t;
+    cin >> t;  // Read number of test cases
+
+    unordered_map<char, int> dct = {{'N', 1}, {'S', -1}, {'E', 1}, {'W', -1}};
+
+    while (t--) {
+        int n;
+        cin >> n;
+        string s;
+        cin >> s;
+
+        int y = 0, x = 0;
+        for (char w : s) {
+            if (w == 'N' || w == 'S') {
+                y += dct[w];
+            } else if (w == 'E' || w == 'W') {
+                x += dct[w];
+            }
+        }
+
+        if (x % 2 != 0 || y % 2 != 0) {
+            cout << "NO" << endl;
+            continue;
+        }
+        if (x == 0 && y == 0 && n <= 2) {
+            cout << "NO" << endl;
+            continue;
+        }
+
+        vector<char> ans;
+        int x0 = 0, y0 = 0;
+
+        if (x == 0 && y == 0) {
+            ans.push_back('R');
+
+            if (s[0] == 'E' || s[0] == 'W') {
+                x0 += dct[s[0]];
+            } else {
+                y0 += dct[s[0]];
+            }
+            s = s.substr(1);
+        }
+
+        for (char w : s) {
+            if (w == 'N' || w == 'S') {
+                if ((w == 'N' && y0 < y / 2) || (w == 'S' && y0 > y / 2)) {
+                    ans.push_back('R');
+                    y0 += (w == 'N' ? 1 : -1);
+                } else {
+                    ans.push_back('H');
+                }
+            } else if (w == 'E' || w == 'W') {
+                if ((w == 'E' && x0 < x / 2) || (w == 'W' && x0 > x / 2)) {
+                    ans.push_back('R');
+                    x0 += (w == 'E' ? 1 : -1);
+                } else {
+                    ans.push_back('H');
+                }
+            }
+        }
+
+        if (find(ans.begin(), ans.end(), 'R') != ans.end() && find(ans.begin(), ans.end(), 'H') != ans.end()) {
+            for (char c : ans) {
+                cout << c;
+            }
+            cout << endl;
+        } else {
+            cout << "NO" << endl;
+        }
+    }
+
     return 0;
 }

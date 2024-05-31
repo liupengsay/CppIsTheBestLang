@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(CppIsTheBestLang)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 
 include_directories(.)
@@ -105,6 +105,10 @@ add_executable(problem_a tests/codeforces/problem_a.cpp)
 add_executable(problem_b tests/codeforces/problem_b.cpp)
 add_executable(problem_c tests/codeforces/problem_c.cpp)
 add_executable(problem_d tests/codeforces/problem_d.cpp)
+add_executable(problem_e tests/codeforces/problem_e.cpp)
+add_executable(problem_f tests/codeforces/problem_f.cpp)
+add_executable(problem_g tests/codeforces/problem_g.cpp)
+add_executable(problem_h tests/codeforces/problem_h.cpp)
 add_executable(codeforces tests/codeforces/template.cpp)
 
 add_executable(problem_1 tests/leetcode/problem_1.cpp)

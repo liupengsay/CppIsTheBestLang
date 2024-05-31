@@ -12,7 +12,7 @@ class TestGeneral(unittest.TestCase):
         n = 1000
         for i in range(1, n + 1):
             for w in str(i):
-                cnt[int(w)] += 1
+                cnt[long long(w)] += 1
 
         for d in range(10):
             assert dd.count_digit(n, d) == cnt[d]

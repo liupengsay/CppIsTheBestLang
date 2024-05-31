@@ -1,60 +1,92 @@
-import heapq
-from typing import List
+class FindMedian {
+private:
+    priority_queue<int, vector<int>, greater<int>>  small; // Max heap
+    priority_queue<int, vector<int>, greater<int>> big; // Min heap
+    unordered_map<int, int> big_dct;
+    unordered_map<int, int> small_dct;
+    int big_cnt = 0;
+    int small_cnt = 0;
 
+    void deleteNum() {
+        while (!small.empty() && small_dct[-small.top()] == 0) {
+            small.pop();
+        }
+        while (!big.empty() && big_dct[big.top()] == 0) {
+            big.pop();
+        }
+    }
 
-class HeapqMedian:
-    def __init__(self, mid):
-        """median maintenance by heapq with odd length array"""
-        self.mid = mid
-        self.left = []
-        self.right = []
-        return
+    void change() {
+        deleteNum();
+        while (!small.empty() && !big.empty() && -small.top() > big.top()) {
+            small_dct[-small.top()]--;
+            big_dct[-small.top()]++;
+            small_cnt--;
+            big_cnt++;
+            big.push(-small.top());
+            small.pop();
+            deleteNum();
+        }
+    }
 
-    def add(self, num):
+    void balance() {
+        deleteNum();
+        while (small_cnt > big_cnt) {
+            small_dct[-small.top()]--;
+            big_dct[-small.top()]++;
+            big.push(-small.top());
+            small.pop();
+            small_cnt--;
+            big_cnt++;
+            deleteNum();
+        }
 
-        if num > self.mid:
-            heapq.heappush(self.right, num)
-        else:
-            heapq.heappush(self.left, -num)
-        n = len(self.left) + len(self.right)
+        while (small_cnt < big_cnt - 1) {
+            big_dct[big.top()]--;
+            small_dct[big.top()]++;
+            small.push(-big.top());
+            big.pop();
+            big_cnt--;
+            small_cnt++;
+            deleteNum();
+        }
+    }
 
-        if n % 2 == 0:
-            # maintain equal length
-            if len(self.left) > len(self.right):
-                heapq.heappush(self.right, self.mid)
-                self.mid = -heapq.heappop(self.left)
-            elif len(self.right) > len(self.left):
-                heapq.heappush(self.left, -self.mid)
-                self.mid = heapq.heappop(self.right)
-        return
+public:
+    void add(int num) {
+        if (big.empty() || big.top() < num) {
+            big_dct[num]++;
+            big.push(num);
+            big_cnt++;
+        } else {
+            small_dct[num]++;
+            small.push(-num);
+            small_cnt++;
+        }
+        change();
+        balance();
+    }
 
-    def query(self):
-        return self.mid
+    void remove(int num) {
+        change();
+        balance();
+        if (big_dct[num] > 0) {
+            big_cnt--;
+            big_dct[num]--;
+        } else {
+            small_cnt--;
+            small_dct[num]--;
+        }
+        change();
+        balance();
+    }
 
-
-class KthLargest:
-    def __init__(self, k: int, nums: List[int]):
-        self.heap = [num for num in nums]
-        self.k = k
-        heapq.heapify(self.heap)
-
-    def add(self, val: int) -> int:
-        heapq.heappush(self.heap, val)
-        while len(self.heap) > self.k:
-            heapq.heappop(self.heap)
-        return self.heap[0]
-
-
-class MedianFinder:
-    def __init__(self):
-        self.pre = []
-        self.post = []
-
-    def add_num(self, num: int) -> None:
-        if len(self.pre) != len(self.post):
-            heapq.heappush(self.pre, -heapq.heappushpop(self.post, num))
-        else:
-            heapq.heappush(self.post, -heapq.heappushpop(self.pre, -num))
-
-    def find_median(self) -> float:
-        return self.post[0] if len(self.pre) != len(self.post) else (self.post[0]-self.pre[0])/2
+    int findMedian() {
+        change();
+        balance();
+        if (big_cnt == small_cnt) {
+            return (-small.top() + big.top()) / 2;
+        }
+        return big.top();
+    }
+};

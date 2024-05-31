@@ -8,7 +8,7 @@
 class TestGeneral {
 public:
     static void DijkstraTest() {
-        std::vector<std::vector<std::pair<int, int>>> dct = {{{1, 1}, {2, 4}},
+        std::vector<std::vector<std::pair<long long, long long>>> dct = {{{1, 1}, {2, 4}},
                                                              {{2, 2}},
                                                              {},
                                                              {}};
@@ -19,9 +19,9 @@ public:
 
     static void SolutionTest() {
 
-        int n = 4;
-        std::vector<std::vector<int>> dct = {{0,1,3},{1,2,1},{1,3,4},{2,3,1}};
-        int result = Solution::lc_1334(n, dct, 4);
+        long long n = 4;
+        std::vector<std::vector<long long>> dct = {{0,1,3},{1,2,1},{1,3,4},{2,3,1}};
+        long long result = Solution::lc_1334(n, dct, 4);
         assert(result == 3);
 
     }

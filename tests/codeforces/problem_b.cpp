@@ -1,108 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <algorithm>
+#include <map>
 
-#define ac FastIO
+using namespace std;
 
+void solve() {
+    int n;
+    cin >> n;
+    vector<pair<int, int>> nums(n);
 
-class FastIO {
-public:
-    static long long read_int() {
-        long long num;
-        std::cin >> num;
-        return num;
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i].first >> nums[i].second;
     }
 
-    static float read_float() {
-        float num;
-        std::cin >> num;
-        return num;
-    }
+    sort(nums.begin(), nums.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+        return a.second < b.second;
+    });
 
-    static std::vector<long long> read_list_ints() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
+    map<int, int> post;
+
+    for (const auto& p : nums) {
+        int a = p.first, b = p.second;
+        int x = a;
+        vector<int> lst;
+
+        while (post.find(x) != post.end()) {
+            lst.push_back(x);
+            x = post[x];
         }
-        return nums;
-    }
 
-    static std::vector<long long> read_list_ints_minus_one() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
-            nums[i] -= 1;
+        if (x > b) {
+            cout << "No" << endl;
+            return;
         }
-        return nums;
-    }
 
-    static std::string read_str() {
-        std::string str;
-        std::cin >> str;
-        return str;
-    }
-
-    static std::vector<std::string> read_list_strs() {
-        long long n;
-        std::cin >> n;
-        std::vector<std::string> strs(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> strs[i];
+        for (int y : lst) {
+            post[y] = x + 1;
         }
-        return strs;
+
+        post[x] = x + 1;
     }
 
-    static void st(long long x) {
-        std::cout << x << std::endl;
-    }
-
-    static void lst(const std::vector<long long> &x) {
-        for (long long num: x) {
-            std::cout << num << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    static long long max(long long a, long long b) {
-        return (a > b) ? a : b;
-    }
-
-    static long long min(long long a, long long b) {
-        return (a < b) ? a : b;
-    }
-
-    static long long ceil(long long a, long long b) {
-        return a / b + (a % b != 0);
-    }
-
-    static long long floor(long long a, long long b) {
-        if (a > 0) {
-            return a / b;
-        }
-        long long res = a / b;
-        if (a % b) {
-            res--;
-        }
-        return res;
-    }
-};
-
-
-
-class Solution {
-public:
-    static void main() {
-
-    }
-};
-
+    cout << "Yes" << endl;
+}
 
 int main() {
-    Solution::main();
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
     return 0;
 }

@@ -7,22 +7,22 @@
 
 class PointAddRangeSum {
 public:
-    explicit PointAddRangeSum(int n) : n(n), t(n + 1, 0) {}
+    explicit PointAddRangeSum(long long n) : n(n), t(n + 1, 0) {}
 
-    static int lowestBit(int i) {
+    static long long lowestBit(long long i) {
         return i & (-i);
     }
 
-    [[noreturn]] void build(const std::vector<int> &nums) {
+    [[noreturn]] void build(const std::vector<long long> &nums) {
         assert(nums.size() == n);
-        std::vector<int> pre(n + 1, 0);
-        for (int i = 0; i < n; i++) {
+        std::vector<long long> pre(n + 1, 0);
+        for (long long i = 0; i < n; i++) {
             pre[i + 1] = pre[i] + nums[i];
             t[i + 1] = pre[i + 1] - pre[i + 1 - lowestBit(i + 1)];
         }
     }
 
-    void pointAdd(int i, int mi) {
+    void PointAdd(long long i, long long mi) {
         assert(1 <= i && i <= n);
         while (i < t.size()) {
             t[i] += mi;
@@ -30,30 +30,30 @@ public:
         }
     }
 
-    std::vector<int> get() {
-        std::vector<int> nums(n);
-        for (int i = 0; i < n; i++) {
+    std::vector<long long> get() {
+        std::vector<long long> nums(n);
+        for (long long i = 0; i < n; i++) {
             nums[i] = preSum(i + 1);
         }
-        for (int i = n - 1; i > 0; i--) {
+        for (long long i = n - 1; i > 0; i--) {
             nums[i] -= nums[i - 1];
         }
         return nums;
     }
 
-    int rangeSum(int x, int y) {
+    long long rangeSum(long long x, long long y) {
         assert(1 <= x && x <= y && y <= n);
-        int res = x > 1 ? preSum(y) - preSum(x - 1) : preSum(y);
+        long long res = x > 1 ? preSum(y) - preSum(x - 1) : preSum(y);
         return res;
     }
 
 private:
-    int n;
-    std::vector<int> t;
+    long long n;
+    std::vector<long long> t;
 
-    int preSum(int i) {
+    long long preSum(long long i) {
         assert(1 <= i && i <= n);
-        int mi = 0;
+        long long mi = 0;
         while (i > 0) {
             mi += t[i];
             i -= lowestBit(i);
@@ -65,16 +65,16 @@ private:
 
 class PointAscendPreMax {
 public:
-    explicit PointAscendPreMax(int n, int initial = std::numeric_limits<int>::min())
+    explicit PointAscendPreMax(long long n, long long initial = std::numeric_limits<long long>::min())
             : n(n), initial(initial), t(n + 1, initial) {}
 
-    static int lowestBit(int i) {
+    static long long lowestBit(long long i) {
         return i & (-i);
     }
 
-    int preMax(int i) {
+    long long preMax(long long i) {
         assert(1 <= i && i <= n);
-        int mx = initial;
+        long long mx = initial;
         while (i) {
             mx = std::max(mx, t[i]);
             i -= lowestBit(i);
@@ -82,7 +82,7 @@ public:
         return mx;
     }
 
-    void pointAscend(int i, int mx) {
+    void PointAscend(long long i, long long mx) {
         assert(1 <= i && i <= n);
         while (i < t.size()) {
             t[i] = std::max(t[i], mx);
@@ -91,26 +91,26 @@ public:
     }
 
 private:
-    int n;
-    int initial;
-    std::vector<int> t;
+    long long n;
+    long long initial;
+    std::vector<long long> t;
 };
 
 
 class PointAscendRangeMax {
 public:
-    explicit PointAscendRangeMax(int n, int initial = std::numeric_limits<int>::min())
+    explicit PointAscendRangeMax(long long n, long long initial = std::numeric_limits<long long>::min())
             : n(n), initial(initial), a(n + 1, initial), t(n + 1, initial) {}
 
-    static int lowestBit(int x) {
+    static long long lowestBit(long long x) {
         return x & -x;
     }
 
-    static int max(int a, int b) {
+    static long long max(long long a, long long b) {
         return (a > b) ? a : b;
     }
 
-    void pointAscend(int x, int k) {
+    void PointAscend(long long x, long long k) {
         assert(1 <= x && x <= n);
         if (a[x] >= k) {
             return;
@@ -122,9 +122,9 @@ public:
         }
     }
 
-    int rangeMax(int left, int r) {
+    long long rangeMax(long long left, long long r) {
         assert(1 <= left && left <= r && r <= n);
-        int maxVal = initial;
+        long long maxVal = initial;
         while (r >= left) {
             if (r - lowestBit(r) >= left - 1) {
                 maxVal = max(maxVal, t[r]);
@@ -138,33 +138,33 @@ public:
     }
 
 private:
-    int n;
-    int initial;
-    std::vector<int> a;
-    std::vector<int> t;
+    long long n;
+    long long initial;
+    std::vector<long long> a;
+    std::vector<long long> t;
 };
 
 class PointChangeRangeSum {
 public:
-    explicit PointChangeRangeSum(int n) : n(n), t(n + 1, 0) {}
+    explicit PointChangeRangeSum(long long n) : n(n), t(n + 1, 0) {}
 
-    static int lowestBit(int i) {
+    static long long lowestBit(long long i) {
         return i & (-i);
     }
 
-    void build(const std::vector<int> &nums) {
+    void build(const std::vector<long long> &nums) {
         assert(nums.size() == n);
-        std::vector<int> pre(n + 1, 0);
-        for (int i = 0; i < n; i++) {
+        std::vector<long long> pre(n + 1, 0);
+        for (long long i = 0; i < n; i++) {
             pre[i + 1] = pre[i] + nums[i];
             t[i + 1] = pre[i + 1] - pre[i + 1 - lowestBit(i + 1)];
         }
     }
 
-    void pointChange(int i, int val) {
+    void PointChange(long long i, long long val) {
         assert(1 <= i && i <= n);
-        int pre = rangeSum(i, i);
-        int gap = val - pre;
+        long long pre = rangeSum(i, i);
+        long long gap = val - pre;
         if (gap != 0) {
             while (i < t.size()) {
                 t[i] += gap;
@@ -173,19 +173,19 @@ public:
         }
     }
 
-    std::vector<int> get() {
-        std::vector<int> nums(n);
-        for (int i = 0; i < n; i++) {
+    std::vector<long long> get() {
+        std::vector<long long> nums(n);
+        for (long long i = 0; i < n; i++) {
             nums[i] = preSum(i + 1);
         }
-        for (int i = n - 1; i > 0; i--) {
+        for (long long i = n - 1; i > 0; i--) {
             nums[i] -= nums[i - 1];
         }
         return nums;
     }
 
 
-    int rangeSum(int x, int y) {
+    long long rangeSum(int x, int y) {
         assert(1 <= x && x <= y && y <= n);
         int res = x > 1 ? preSum(y) - preSum(x - 1) : preSum(y);
         return res;

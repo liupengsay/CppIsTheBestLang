@@ -7,7 +7,7 @@ using namespace std;
 
 struct Student {
     string name;
-    int score;
+    long long score;
 };
 
 
@@ -24,11 +24,11 @@ public:
 
         cout << "students_array" << endl;
         Student students_array[] = {{"Tom", 90}, {"Jerry", 85}, {"Bob", 95}, {"Alice", 88}};
-        int len = sizeof(students_array) / sizeof(students_array[0]);
+        long long len = sizeof(students_array) / sizeof(students_array[0]);
         sort(students_array, students_array+len, compare);
 
         // 输出排序后的结果
-        for (int i = 0; i < len; i++) {
+        for (long long i = 0; i < len; i++) {
             cout << students_array[i].name << " " << students_array[i].score << endl;
         }
 
@@ -39,7 +39,7 @@ public:
         sort(students_vector.begin(), students_vector.end(), compare);
 
         // 输出排序后的结果
-        for (int i = 0; i < len; i++) {
+        for (long long i = 0; i < len; i++) {
             cout << students_vector[i].name << " " << students_vector[i].score << endl;
         }
     }

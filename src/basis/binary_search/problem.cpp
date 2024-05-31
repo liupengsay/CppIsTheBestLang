@@ -111,18 +111,18 @@ D - Widespread（https://atcoder.jp/contests/abc063/tasks/arc075_b）经典利�
 
 class Solution {
 public:
-    static int lc_2141(int n, std::vector<int> &batteries) {
+    static long long lc_2141(long long n, std::vector<long long> &batteries) {
         // 模板：经典贪心二分
 
-        std::sort(batteries.begin(), batteries.end(), std::greater<int>());
-        int rest = 0;
-        for (int i = n; i < batteries.size(); i++) {
+        std::sort(batteries.begin(), batteries.end(), std::greater<long long>());
+        long long rest = 0;
+        for (long long i = n; i < batteries.size(); i++) {
             rest += batteries[i];
         }
 
-        auto check = [&](int w) {
-            int res = 0;
-            for (int i = 0; i < n; i++) {
+        auto check = [&](long long w) {
+            long long res = 0;
+            for (long long i = 0; i < n; i++) {
                 if (batteries[i] < w) {
                     res += w - batteries[i];
                 }
@@ -130,6 +130,6 @@ public:
             return res <= rest;
         };
 
-        return BinarySearch::find_int_right(0, batteries[n - 1] + rest, check);
+        return BinarySearch::find_long long_right(0, batteries[n - 1] + rest, check);
     }
 };

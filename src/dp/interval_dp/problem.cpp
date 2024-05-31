@@ -63,8 +63,8 @@ class Solution:
     @staticmethod
     def cf_307b(ac=FastIO()):
         #
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
 
         # 初始化
         dp = [[inf] * n for _ in range(n + 1)]
@@ -103,7 +103,7 @@ class Solution:
         return dp[0][n - 1]
 
     @staticmethod
-    def lc_1312(s: str) -> int:
+    def lc_1312(s: str) -> long long:
         # 模板：经典区间DP，最长回文子序列
         n = len(s)
         dp = [[0] * n for _ in range(n)]
@@ -114,13 +114,13 @@ class Solution:
             for j in range(i + 2, n):
                 a, b = dp[i + 1][j], dp[i][j - 1]
                 a = a if a > b else b
-                b = dp[i + 1][j - 1] + 2 * int(s[i] == s[j])
+                b = dp[i + 1][j - 1] + 2 * long long(s[i] == s[j])
 
                 dp[i][j] = a if a > b else b
         return n - dp[0][n - 1]
 
     @staticmethod
-    def lc_1547(n: int, cuts: List[int]) -> int:
+    def lc_1547(n: long long, cuts: List[long long]) -> long long:
         # 模板：区间DP模拟
         cuts.sort()
         cuts.insert(0, 0)
@@ -133,7 +133,7 @@ class Solution:
         return dp[0][m - 1]
 
     @staticmethod
-    def lc_1690(stones: List[int]) -> int:
+    def lc_1690(stones: List[long long]) -> long long:
         # 模板：经典区间DP
         n = len(stones)
         pre = list(accumulate(stones, initial=0))
@@ -149,7 +149,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2472(s: str, k: int) -> int:
+    def lc_2472(s: str, k: long long) -> long long:
         # 模板：预处理线性回文子串 DP 优化外加结果计算线性 DP 也可以使用马拉车回文串获取回文信息
         n = len(s)
         res = [[0] * (n + 1) for _ in range(n + 1)]
@@ -172,8 +172,8 @@ class Solution:
     @staticmethod
     def lg_p3205(ac=FastIO()):
         # 模板：区间DP滚动数组更新
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         mod = 19650827
         dp = [[[0, 0] for _ in range(n)] for _ in range(2)]
         pre = 0
@@ -202,8 +202,8 @@ class Solution:
     @staticmethod
     def lg_p1040(ac=FastIO()):
         # 模板：使用区间DP计算最小代价，并使用迭代还原前序遍历路径
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
 
         dp = [[0] * n for _ in range(n)]
         for i in range(n - 1, -1, -1):
@@ -238,8 +238,8 @@ class Solution:
     @staticmethod
     def lg_p1430(ac=FastIO()):
         # 模板：区间DP加前缀数组优化
-        for _ in range(ac.read_int()):
-            nums = ac.read_list_ints()
+        for _ in range(ac.read_long long()):
+            nums = ac.read_list_long longs()
             n = nums.pop(0)
             pre = [0] * (n + 1)
             for i in range(n):
@@ -264,8 +264,8 @@ class Solution:
     @staticmethod
     def lg_p2308(ac=FastIO()):
         # 模板：经典区间DP，并使用递归方式反解括号添加方式以及每一步的和
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         pre = ac.accumulate(nums)
         # 记录转移的中间节点与加和最小值
         dp = [[inf] * n for _ in range(n)]
@@ -311,10 +311,10 @@ class Solution:
 
         # 模板：前缀和加区间 DP
 
-        n = ac.read_int()
+        n = ac.read_long long()
         nums = []
         while len(nums) < n:
-            nums.extend(ac.read_list_ints())
+            nums.extend(ac.read_list_long longs())
         pre = ac.accumulate(nums)
 
         # @lru_cache(None)
@@ -340,8 +340,8 @@ class Solution:
     @staticmethod
     def lg_p3004(ac=FastIO()):
         # 模板：简单区间 DP
-        n = ac.read_int()
-        nums = [ac.read_int() for _ in range(n)]
+        n = ac.read_long long()
+        nums = [ac.read_long long() for _ in range(n)]
         dp = [[0] * n for _ in range(2)]
         pre = ac.accumulate(nums)
         x = 0
@@ -375,8 +375,8 @@ class Solution:
     @staticmethod
     def ac_3996(ac=FastIO()):
         # 模板：经典区间 DP 最长回文子序列变形
-        ac.read_int()
-        nums = ac.read_list_ints()
+        ac.read_long long()
+        nums = ac.read_list_long longs()
         pre = []
         for num in nums:
             if pre and pre[-1] == num:
@@ -395,7 +395,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_1278(s: str, k: int) -> int:
+    def lc_1278(s: str, k: long long) -> long long:
         # 模板：经典预处理双重区间DP进行计算
         n = len(s)
 
@@ -405,7 +405,7 @@ class Solution:
                 j = i + 1
                 cost[i][j] = 1 if s[i] != s[j] else 0
             for j in range(i + 2, n):
-                cost[i][j] = cost[i + 1][j - 1] + int(s[i] != s[j])
+                cost[i][j] = cost[i + 1][j - 1] + long long(s[i] != s[j])
 
         dp = [[n] * k for _ in range(n + 1)]
         for i in range(n):

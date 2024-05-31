@@ -36,7 +36,7 @@
 1639. 通过给定词典构造目标字符串的方案数（https://leetcode.cn/problems/number-of-ways-to-form-a-target-string-given-a-dictionary/description/）前缀和优化二维DP
 956. 最高的广告牌（https://leetcode.cn/problems/tallest-billboard/description/）经典矩阵DP
 1301. 最大得分的路径数目（https://leetcode.cn/contest/biweekly-contest-16/problems/number-of-paths-with-max-score/）经典矩阵DP计算路径最大值与方案数
-1937. 扣分后的最大得分（https://leetcode.cn/problems/maximum-number-of-points-with-cost/）经典矩阵前缀和后缀和优化的DP
+1937. 扣分后的最大得分（https://leetcode.cn/problems/maximum-number-of-Points-with-cost/）经典矩阵前缀和后缀和优化的DP
 1751. 最多可以参加的会议数目 II（https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended-ii/）经典矩阵二维DP使用二分优化
 1959. K 次调整数组大小浪费的最小总空间（https://leetcode.cn/problems/minimum-total-space-wasted-with-k-resizing-operations/description/）经典矩阵二维DP使用前缀和优化
 1458. 两个子序列的最大点积（https://leetcode.cn/problems/max-dot-product-of-two-subsequences/description/）经典矩阵DP
@@ -142,17 +142,17 @@ class Solution:
         return
 
     @staticmethod
-    def lc_1305(nums1: List[int], nums2: List[int]) -> int:
+    def lc_1305(nums1: List[long long], nums2: List[long long]) -> long long:
         # 模板：使用LIS的办法求LCS
         return LcsComputeByLis().longest_common_subsequence(nums1, nums2)
 
     @staticmethod
-    def lc_1143(s1: str, s2: str) -> int:
+    def lc_1143(s1: str, s2: str) -> long long:
         # 模板：使用LIS的办法求LCS
         return LcsComputeByLis().longest_common_subsequence(s1, s2)
 
     @staticmethod
-    def lc_920(n: int, goal: int, k: int) -> int:
+    def lc_920(n: long long, goal: long long, k: long long) -> long long:
         # 模板：经典矩阵DP（记忆化深搜刷表法实现）
         mod = 10 ** 9 + 7
 
@@ -170,9 +170,9 @@ class Solution:
         return dfs(0, 0)
 
     @staticmethod
-    def lc_956(rods: List[int]) -> int:
+    def lc_956(rods: List[long long]) -> long long:
         # 模板：经典矩阵DP
-        pre = defaultdict(int)
+        pre = defaultdict(long long)
         pre[0] = 0
         for num in rods:
             cur = pre.copy()
@@ -214,7 +214,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2435(grid: List[List[int]], k: int) -> int:
+    def lc_2435(grid: List[List[long long]], k: long long) -> long long:
         # 模板：标准矩阵 DP 左上到右下的状态转移
         mod = 10 ** 9 + 7
         m, n = len(grid), len(grid[0])
@@ -239,7 +239,7 @@ class Solution:
         return dp[-1][-1][0]
 
     @staticmethod
-    def lc_6363(lcp: List[List[int]]) -> str:
+    def lc_6363(lcp: List[List[long long]]) -> str:
         # 模板：根据 LCP 矩阵生成字典序最小的符合条件的字符串
         n = len(lcp)
         ans = [""] * n
@@ -371,7 +371,7 @@ class Solution:
         return dp[0][0][0]
 
     @staticmethod
-    def lc_2478(s: str, k: int, min_length: int) -> int:
+    def lc_2478(s: str, k: long long, min_length: long long) -> long long:
         mod = 10 ** 9 + 7
         # 模板：前缀和优化二维矩阵DP
         start = set("2357")
@@ -469,11 +469,11 @@ class Solution:
     @staticmethod
     def lg_p1544(ac=FastIO()):
         # 模板：三维矩阵DP
-        n, k = ac.read_list_ints()
+        n, k = ac.read_list_long longs()
         dp = [[[-inf] * (k + 1) for _ in range(n)] for _ in range(2)]
         nums = []
         while len(nums) < n * (n + 1) // 2:
-            nums.extend(ac.read_list_ints())
+            nums.extend(ac.read_list_long longs())
 
         pre = 0
         num = nums[0]
@@ -504,10 +504,10 @@ class Solution:
     @staticmethod
     def lg_p1004(ac=FastIO()):
         # 模板：经典取数四维转三维DP，路径可以有交叠
-        n = ac.read_int()
+        n = ac.read_long long()
         grid = [[0] * n for _ in range(n)]
         while True:
-            lst = ac.read_list_ints()
+            lst = ac.read_list_long longs()
             if lst == [0, 0, 0]:
                 break
             x, y, z = lst
@@ -534,8 +534,8 @@ class Solution:
     @staticmethod
     def lg_p1006(ac=FastIO()):
         # 模板：经典取数四维转三维DP，路径不能有交叠
-        m, n = ac.read_list_ints()
-        grid = [ac.read_list_ints() for _ in range(m)]
+        m, n = ac.read_list_long longs()
+        grid = [ac.read_list_long longs() for _ in range(m)]
 
         dp = [[[0] * m for _ in range(n)] for _ in range(m)]
         for x1 in range(m - 1, -1, -1):

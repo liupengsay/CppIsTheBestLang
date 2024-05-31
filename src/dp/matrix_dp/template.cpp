@@ -30,7 +30,7 @@ class MatrixDP:
         for i in range(m - 1, -1, -1):
             for j in range(n - 1, -1, -1):
                 dp[i][j] = min(dp[i + 1][j] + 1, dp[i][j + 1] + 1,
-                               dp[i + 1][j + 1] + int(word1[i] != word2[j]))
+                               dp[i + 1][j + 1] + long long(word1[i] != word2[j]))
         return dp[0][0]
 
     @staticmethod
@@ -58,7 +58,7 @@ class MatrixDP:
         return ans
 
     @staticmethod
-    def maximal_square(matrix: List[List[str]]) -> int:
+    def maximal_square(matrix: List[List[str]]) -> long long:
 
         # The maximum square sub matrix with all value equal to 1
         m, n = len(matrix), len(matrix[0])

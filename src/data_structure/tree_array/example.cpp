@@ -12,26 +12,26 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        for (int xx = 0; xx < 100; xx++) {
-            int ceil = std::uniform_int_distribution<int>(10, 1000)(gen);
-            std::vector<int> nums(ceil);
+        for (long long xx = 0; xx < 100; xx++) {
+            long long ceil = std::uniform_long long_distribution<long long>(10, 1000)(gen);
+            std::vector<long long> nums(ceil);
             std::generate(nums.begin(), nums.end(),
-                          [&]() { return std::uniform_int_distribution<int>(-ceil, ceil)(gen); });
+                          [&]() { return std::uniform_long long_distribution<long long>(-ceil, ceil)(gen); });
 
             PointAddRangeSum tree_array(ceil);
             tree_array.build(nums);
 
-            for (int _ = 0; _ < ceil; ++_) {
-                int d = std::uniform_int_distribution<int>(-ceil, ceil)(gen);
-                int i = std::uniform_int_distribution<int>(0, ceil - 1)(gen);
+            for (long long _ = 0; _ < ceil; ++_) {
+                long long d = std::uniform_long long_distribution<long long>(-ceil, ceil)(gen);
+                long long i = std::uniform_long long_distribution<long long>(0, ceil - 1)(gen);
                 nums[i] += d;
-                tree_array.pointAdd(i + 1, d);
+                tree_array.PointAdd(i + 1, d);
 
-                int left = std::uniform_int_distribution<int>(0, ceil - 1)(gen);
-                int right = std::uniform_int_distribution<int>(left, ceil - 1)(gen);
+                long long left = std::uniform_long long_distribution<long long>(0, ceil - 1)(gen);
+                long long right = std::uniform_long long_distribution<long long>(left, ceil - 1)(gen);
 
-                int expected_sum = std::accumulate(nums.begin() + left, nums.begin() + right + 1, 0);
-                int range_sum = tree_array.rangeSum(left + 1, right + 1);
+                long long expected_sum = std::accumulate(nums.begin() + left, nums.begin() + right + 1, 0);
+                long long range_sum = tree_array.rangeSum(left + 1, right + 1);
 
                 assert(expected_sum == range_sum);
                 assert(nums == tree_array.get());
@@ -42,32 +42,32 @@ public:
     static void PointAscendPreMaxTest() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> randDist(10, 1000);
-        std::uniform_int_distribution<> lowDist(-1000, 0);
-        std::uniform_int_distribution<> highDist(0, 10000);
+        std::uniform_long long_distribution<> randDist(10, 1000);
+        std::uniform_long long_distribution<> lowDist(-1000, 0);
+        std::uniform_long long_distribution<> highDist(0, 10000);
 
-        for (int initial: {std::numeric_limits<int>::min(), 0}) {
-            for (int xx = 0; xx < 100; xx++) {
-                int n = randDist(gen);
-                int low = (initial == std::numeric_limits<int>::min()) ? -1000 : 0;
-                int high = 10000;
+        for (long long initial: {std::numeric_limits<long long>::min(), 0}) {
+            for (long long xx = 0; xx < 100; xx++) {
+                long long n = randDist(gen);
+                long long low = (initial == std::numeric_limits<long long>::min()) ? -1000 : 0;
+                long long high = 10000;
                 PointAscendPreMax treeArray(n, initial);
-                std::vector<int> nums(n, initial);
-                std::uniform_int_distribution<> randDistCur(low, high);
-                for (int yy = 0; yy < 100; yy++) {
+                std::vector<long long> nums(n, initial);
+                std::uniform_long long_distribution<> randDistCur(low, high);
+                for (long long yy = 0; yy < 100; yy++) {
 
-                    int x = randDistCur(gen);
-                    int i = std::uniform_int_distribution<>(0, n - 1)(gen);
+                    long long x = randDistCur(gen);
+                    long long i = std::uniform_long long_distribution<>(0, n - 1)(gen);
 
                     nums[i] = std::max(nums[i], x);
-                    treeArray.pointAscend(i + 1, x);
-                    std::vector<int> expected = nums;
+                    treeArray.PointAscend(i + 1, x);
+                    std::vector<long long> expected = nums;
 
-                    std::partial_sum(expected.begin(), expected.end(), expected.begin(), [](int a, int b) {
+                    std::partial_sum(expected.begin(), expected.end(), expected.begin(), [](long long a, long long b) {
                         return std::max(a, b);
                     });
-                    std::vector<int> result(n);
-                    for (int ii = 0; ii < n; ii++) {
+                    std::vector<long long> result(n);
+                    for (long long ii = 0; ii < n; ii++) {
                         result[ii] = treeArray.preMax(ii + 1);
                     }
                     assert(result == expected);
@@ -79,22 +79,22 @@ public:
     static void PointAscendRangeMaxTest() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        for (int initial: {std::numeric_limits<int>::min(), 0}) {
-            for (int xx = 0; xx < 100; xx++) {
-                int n = std::uniform_int_distribution<>(10, 1000)(gen);
-                int low = (initial == std::numeric_limits<int>::min()) ? -1000 : 0;
-                int high = 10000;
+        for (long long initial: {std::numeric_limits<long long>::min(), 0}) {
+            for (long long xx = 0; xx < 100; xx++) {
+                long long n = std::uniform_long long_distribution<>(10, 1000)(gen);
+                long long low = (initial == std::numeric_limits<long long>::min()) ? -1000 : 0;
+                long long high = 10000;
                 PointAscendRangeMax treeArray(n, initial);
-                std::vector<int> nums(n, initial);
-                for (int yy = 0; yy < 100; yy++) {
-                    int x = std::uniform_int_distribution<>(low, high)(gen);
-                    int i = std::uniform_int_distribution<>(0, n - 1)(gen);
+                std::vector<long long> nums(n, initial);
+                for (long long yy = 0; yy < 100; yy++) {
+                    long long x = std::uniform_long long_distribution<>(low, high)(gen);
+                    long long i = std::uniform_long long_distribution<>(0, n - 1)(gen);
                     nums[i] = std::max(nums[i], x);
-                    treeArray.pointAscend(i + 1, x);
-                    int ll = std::uniform_int_distribution<>(0, n - 1)(gen);
-                    int rr = std::uniform_int_distribution<>(ll, n - 1)(gen);
-                    int expected = *std::max_element(nums.begin() + ll, nums.begin() + rr + 1);
-                    int result = treeArray.rangeMax(ll + 1, rr + 1);
+                    treeArray.PointAscend(i + 1, x);
+                    long long ll = std::uniform_long long_distribution<>(0, n - 1)(gen);
+                    long long rr = std::uniform_long long_distribution<>(ll, n - 1)(gen);
+                    long long expected = *std::max_element(nums.begin() + ll, nums.begin() + rr + 1);
+                    long long result = treeArray.rangeMax(ll + 1, rr + 1);
                     assert(result == expected);
                 }
             }
@@ -106,21 +106,21 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        for (int xx = 0; xx < 100; xx++) {
-            int ceil = std::uniform_int_distribution<>(10, 1000)(gen);
-            std::vector<int> nums(ceil);
-            for (int i = 0; i < ceil; i++) {
-                nums[i] = std::uniform_int_distribution<>(-ceil, ceil)(gen);
+        for (long long xx = 0; xx < 100; xx++) {
+            long long ceil = std::uniform_long long_distribution<>(10, 1000)(gen);
+            std::vector<long long> nums(ceil);
+            for (long long i = 0; i < ceil; i++) {
+                nums[i] = std::uniform_long long_distribution<>(-ceil, ceil)(gen);
             }
 
             PointChangeRangeSum treeArray(ceil);
             treeArray.build(nums);
 
-            for (int _ = 0; _ < ceil; _++) {
-                int d = std::uniform_int_distribution<>(-ceil, ceil)(gen);
-                int i = std::uniform_int_distribution<>(0, ceil - 1)(gen);
+            for (long long _ = 0; _ < ceil; _++) {
+                long long d = std::uniform_long long_distribution<>(-ceil, ceil)(gen);
+                long long i = std::uniform_long long_distribution<>(0, ceil - 1)(gen);
                 nums[i] = d;
-                treeArray.pointChange(i + 1, d);
+                treeArray.PointChange(i + 1, d);
 
                 int left = std::uniform_int_distribution<>(0, ceil - 1)(gen);
                 int right = std::uniform_int_distribution<>(left, ceil - 1)(gen);

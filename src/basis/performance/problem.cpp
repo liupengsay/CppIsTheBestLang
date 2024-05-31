@@ -17,5 +17,5 @@ class XXX:
 
 
 class Solution:
-    def __int__(self):
+    def __long long__(self):
         return

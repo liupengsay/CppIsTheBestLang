@@ -31,23 +31,23 @@ class Solution:
         return
 
     @staticmethod
-    def lc_1659_1(m: int, n: int, introverts: int, extroverts: int) -> int:
+    def lc_1659_1(m: long long, n: long long, long longroverts: long long, extroverts: long long) -> long long:
         # 模板：记忆化深搜进行轮廓线 DP
-        def dfs(pos, state, intro, ext):
+        def dfs(pos, state, long longro, ext):
             # 当前网格位置，前 n 个格子压缩状态，剩余内向人数，剩余外向人数
-            res = dp[pos][state][intro][ext]
+            res = dp[pos][state][long longro][ext]
             if res != -1:
                 return res
-            if not intro and not ext:
-                dp[pos][state][intro][ext] = 0
+            if not long longro and not ext:
+                dp[pos][state][long longro][ext] = 0
                 return 0
             if pos == m * n:
-                dp[pos][state][intro][ext] = 0
+                dp[pos][state][long longro][ext] = 0
                 return 0
-            res = dfs(pos + 1, 3 * (state % s), intro, ext)
+            res = dfs(pos + 1, 3 * (state % s), long longro, ext)
             i, j = pos // n, pos % n
-            if intro:
-                cur = dfs(pos + 1, 3 * (state % s) + 1, intro - 1, ext) + 120
+            if long longro:
+                cur = dfs(pos + 1, 3 * (state % s) + 1, long longro - 1, ext) + 120
                 # 左边
                 if j:
                     cur += cross[state % 3][1]
@@ -56,7 +56,7 @@ class Solution:
                     cur += cross[state // s][1]
                 res = res if res > cur else cur
             if ext:
-                cur = dfs(pos + 1, 3 * (state % s) + 2, intro, ext - 1) + 40
+                cur = dfs(pos + 1, 3 * (state % s) + 2, long longro, ext - 1) + 40
                 # 左边
                 if j:
                     cur += cross[state % 3][2]
@@ -64,32 +64,32 @@ class Solution:
                 if i:
                     cur += cross[state // s][2]
                 res = res if res > cur else cur
-            dp[pos][state][intro][ext] = res
+            dp[pos][state][long longro][ext] = res
             return res
 
         s = 3 ** (n - 1)
         cross = [[0, 0, 0], [0, -60, -10], [40, -10, 40]]
         # 手写记忆化进行内存优化
-        dp = [[[[-1] * (extroverts + 1) for _ in range(introverts + 1)] for _ in range(s * 3)] for _ in range(m * n + 1)]
-        return dfs(0, 0, introverts, extroverts)
+        dp = [[[[-1] * (extroverts + 1) for _ in range(long longroverts + 1)] for _ in range(s * 3)] for _ in range(m * n + 1)]
+        return dfs(0, 0, long longroverts, extroverts)
 
     @staticmethod
-    def lc_1659_2(m: int, n: int, introverts: int, extroverts: int) -> int:
+    def lc_1659_2(m: long long, n: long long, long longroverts: long long, extroverts: long long) -> long long:
         # 模板：迭代进行轮廓线 DP
         s = 3 ** (n - 1)
         cross = [[0, 0, 0], [0, -60, -10], [40, -10, 40]]
-        dp = [[[[0] * (extroverts + 1) for _ in range(introverts + 1)] for _ in range(s * 3)] for _ in range(m * n + 1)]
+        dp = [[[[0] * (extroverts + 1) for _ in range(long longroverts + 1)] for _ in range(s * 3)] for _ in range(m * n + 1)]
         for pos in range(m * n - 1, -1, -1):
             # 还可以进行滚动数组优化
             i, j = pos // n, pos % n
             for state in range(s * 3):
-                for intro in range(introverts + 1):
+                for long longro in range(long longroverts + 1):
                     for ext in range(extroverts + 1):
-                        if intro == ext == 0:
+                        if long longro == ext == 0:
                             continue
-                        res = dp[pos + 1][3 * (state % s)][intro][ext]
-                        if intro:
-                            cur = dp[pos + 1][3 * (state % s) + 1][intro - 1][ext] + 120
+                        res = dp[pos + 1][3 * (state % s)][long longro][ext]
+                        if long longro:
+                            cur = dp[pos + 1][3 * (state % s) + 1][long longro - 1][ext] + 120
                             # 左边
                             if j:
                                 cur += cross[state % 3][1]
@@ -98,7 +98,7 @@ class Solution:
                                 cur += cross[state // s][1]
                             res = res if res > cur else cur
                         if ext:
-                            cur = dp[pos + 1][3 * (state % s) + 2][intro][ext - 1] + 40
+                            cur = dp[pos + 1][3 * (state % s) + 2][long longro][ext - 1] + 40
                             # 左边
                             if j:
                                 cur += cross[state % 3][2]
@@ -106,27 +106,27 @@ class Solution:
                             if i:
                                 cur += cross[state // s][2]
                             res = res if res > cur else cur
-                        dp[pos][state][intro][ext] = res
-        return dp[0][0][introverts][extroverts]
+                        dp[pos][state][long longro][ext] = res
+        return dp[0][0][long longroverts][extroverts]
 
     @staticmethod
-    def lc_1659_3(m: int, n: int, introverts: int, extroverts: int) -> int:
+    def lc_1659_3(m: long long, n: long long, long longroverts: long long, extroverts: long long) -> long long:
 
         # 模板：记忆化深搜进行轮廓线 DP
         @lru_cache(None)
-        def dfs(i, state, intro, ext):
+        def dfs(i, state, long longro, ext):
             if i == m * n:
                 return 0
             up = state // w if i // n else 0  # 轮廓线经典边界状态计算
             left = state % 3 if i % n else 0  # 轮廓线经典边界状态计算
-            res = dfs(i + 1, (state - up * w) * 3, intro, ext)
-            if intro:
-                cur = dfs(i + 1, (state - up * w) * 3 + 1, intro - 1, ext) + 120
+            res = dfs(i + 1, (state - up * w) * 3, long longro, ext)
+            if long longro:
+                cur = dfs(i + 1, (state - up * w) * 3 + 1, long longro - 1, ext) + 120
                 cur += cross[1][up] + cross[1][left]
                 if cur > res:
                     res = cur
             if ext:
-                cur = dfs(i + 1, (state - up * w) * 3 + 2, intro, ext - 1) + 40
+                cur = dfs(i + 1, (state - up * w) * 3 + 2, long longro, ext - 1) + 40
                 cur += cross[2][up] + cross[2][left]
                 if cur > res:
                     res = cur
@@ -134,10 +134,10 @@ class Solution:
 
         w = 3 ** (n - 1)
         cross = [[0, 0, 0], [0, -60, -10], [0, -10, 40]]
-        return dfs(0, 0, introverts, extroverts)
+        return dfs(0, 0, long longroverts, extroverts)
 
     @staticmethod
-    def lc_1349_1(seats: List[List[str]]) -> int:
+    def lc_1349_1(seats: List[List[str]]) -> long long:
         # 模板：记忆化深搜轮廓线 DP
 
         def dfs(pos, state):
@@ -165,7 +165,7 @@ class Solution:
         return dfs(0, 0)
 
     @staticmethod
-    def lc_1349_2(seats: List[List[str]]) -> int:
+    def lc_1349_2(seats: List[List[str]]) -> long long:
         # 模板：滚动数组迭代轮廓线 DP
         m, n = len(seats), len(seats[0])
         s = 2 ** n
@@ -189,7 +189,7 @@ class Solution:
         return dp[pre][0]
 
     @staticmethod
-    def lc_1349_3(seats: List[List[str]]) -> int:
+    def lc_1349_3(seats: List[List[str]]) -> long long:
 
         # 模板：轮廓线 DP 经典题目转成一维数组后更好写
         @lru_cache(None)
@@ -212,7 +212,7 @@ class Solution:
         return dfs(0, 0)
 
     @staticmethod
-    def lcp_4_1(n: int, m: int, broken: List[List[int]]) -> int:
+    def lcp_4_1(n: long long, m: long long, broken: List[List[int]]) -> int:
         # 模板：记忆化深搜轮廓线 DP
 
         def dfs(pos, state):

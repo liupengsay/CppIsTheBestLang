@@ -8,7 +8,7 @@ class Range:
 
     @staticmethod
     def merge(lst):
-        """merge intervals into disjoint intervals"""
+        """merge long longervals long longo disjolong long long longervals"""
         lst.sort(key=lambda it: it[0])
         ans = []
         x, y = lst[0]
@@ -23,12 +23,12 @@ class Range:
         return ans
 
     @staticmethod
-    def cover_less(s, t, lst, inter=True):
-        """calculate the minimum number of intervals in lst for coverage [s, t]"""
+    def cover_less(s, t, lst, long longer=True):
+        """calculate the minimum number of long longervals in lst for coverage [s, t]"""
         if not lst:
             return -1
-        # [1, 3] + [3, 4] = [1, 4] by set inter=True
-        # [1, 2] + [3, 4] = [1, 4] by set inter=False
+        # [1, 3] + [3, 4] = [1, 4] by set long longer=True
+        # [1, 2] + [3, 4] = [1, 4] by set long longer=False
         lst.sort(key=lambda x: [x[0], -x[1]])
         if lst[0][0] != s:
             return -1
@@ -40,8 +40,8 @@ class Range:
         for a, b in lst[1:]:
             if end >= t:
                 return ans
-            # can be next disjoint set
-            if (end >= a and inter) or (not inter and end >= a - 1):
+            # can be next disjolong long set
+            if (end >= a and long longer) or (not long longer and end >= a - 1):
                 cur = cur if cur > b else b
             else:
                 if cur <= end:
@@ -52,7 +52,7 @@ class Range:
                 cur = -1
                 if end >= t:
                     return ans
-                if (end >= a and inter) or (not inter and end >= a - 1):
+                if (end >= a and long longer) or (not long longer and end >= a - 1):
                     cur = cur if cur > b else b
                 else:
                     return -1  # which is impossible to coverage [s, t]
@@ -62,9 +62,9 @@ class Range:
         return -1
 
     @staticmethod
-    def minimum_interval_coverage(clips: List[List[int]], time: int, inter=True) -> int:
-        """calculate the minimum number of intervals in clips for coverage [0, time]"""
-        assert inter
+    def minimum_long longerval_coverage(clips: List[List[long long]], time: long long, long longer=True) -> long long:
+        """calculate the minimum number of long longervals in clips for coverage [0, time]"""
+        assert long longer
         assert time >= 0
         if not clips:
             return -1
@@ -73,8 +73,8 @@ class Range:
                 return -1
             return 1
 
-        if inter:
-            # inter=True is necessary
+        if long longer:
+            # long longer=True is necessary
             post = [0]*time
             for a, b in clips:
                 if a < time:
@@ -95,8 +95,8 @@ class Range:
         return ans
 
     @staticmethod
-    def disjoint_most(lst):
-        """select the maximum disjoint intervals"""
+    def disjolong long_most(lst):
+        """select the maximum disjolong long long longervals"""
         lst.sort(key=lambda x: x[1])
         ans = 0
         end = inf

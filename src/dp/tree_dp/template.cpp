@@ -8,7 +8,7 @@ class ReRootDP:
         return
 
     @staticmethod
-    def get_tree_distance_weight(dct: List[List[int]], weight) -> List[int]:
+    def get_tree_distance_weight(dct: List[List[long long]], weight) -> List[long long]:
         # Calculate the total distance from each node of the tree to all other nodes
         # each node has weight
 
@@ -46,7 +46,7 @@ class ReRootDP:
         return ans
 
     @staticmethod
-    def get_tree_centroid(dct: List[List[int]]) -> int:
+    def get_tree_centroid(dct: List[List[long long]]) -> long long:
         # the smallest centroid of tree
         # equal the node with minimum of maximum subtree node cnt
         # equivalent to the node which has the shortest distance from all other nodes
@@ -75,7 +75,7 @@ class ReRootDP:
         return center
 
     @staticmethod
-    def get_tree_distance(dct: List[List[int]]) -> List[int]:
+    def get_tree_distance(dct: List[List[long long]]) -> List[long long]:
         # Calculate the total distance from each node of the tree to all other nodes
 
         n = len(dct)
@@ -111,9 +111,9 @@ class ReRootDP:
         return ans
 
     @staticmethod
-    def get_tree_distance_max(dct: List[List[int]]) -> List[int]:
+    def get_tree_distance_max(dct: List[List[long long]]) -> List[long long]:
         # Calculate the maximum distance from each node of the tree to all other nodes
-        # point BFS on diameter can also be used
+        # Point BFS on diameter can also be used
 
         n = len(dct)
         sub = [[0, 0] for _ in range(n)]

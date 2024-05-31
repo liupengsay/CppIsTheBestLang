@@ -16,19 +16,19 @@
 6293. 统计好子数组的数目（https://leetcode.cn/problems/count-the-number-of-good-subarrays/）双指针计数
 16. 最接近的三数之和（https://leetcode.cn/problems/3sum-closest/）三指针确定最接近目标值的和
 15. 三数之和（https://leetcode.cn/problems/3sum/）寻找三个元素和为 0 的不重复组合
-2422. 使用合并操作将数组转换为回文序列（https://leetcode.cn/problems/merge-operations-to-turn-array-into-a-palindrome/）相反方向双指针贪心加和
+2422. 使用合并操作将数组转换为回文序列（https://leetcode.cn/problems/merge-operations-to-turn-array-long longo-a-palindrome/）相反方向双指针贪心加和
 2524. Maximum Frequency Score of a Subarray（https://leetcode.cn/problems/maximum-frequency-score-of-a-subarray/）滑动窗口维护计算数字数量与幂次取模
 239. 滑动窗口最大值（https://leetcode.cn/problems/sliding-window-maximum/）滑动窗口最大值，使用滑动窗口类维护
 2447. 最大公因数等于 K 的子数组数目（https://leetcode.cn/problems/number-of-subarrays-with-gcd-equal-to-k/）滑动窗口区间 gcd，使用滑动窗口类维护
 6392. 使数组所有元素变成 1 的最少操作次数（https://leetcode.cn/problems/minimum-number-of-operations-to-make-all-array-elements-equal-to-1/）滑动窗口区间 gcd，使用滑动窗口类维护
 1163. 按字典序排在最后的子串（https://leetcode.cn/problems/last-substring-in-lexicographical-order/）经典类似最小表示法的双指针
 2555. 两个线段获得的最多奖品（https://leetcode.cn/problems/maximize-win-from-two-segments/description/）经典同向双指针加线性DP
-992. K 个不同整数的子数组（https://leetcode.cn/problems/subarrays-with-k-different-integers/）经典三指针，即快慢双指针维护连续子区间个数
+992. K 个不同整数的子数组（https://leetcode.cn/problems/subarrays-with-k-different-long longegers/）经典三指针，即快慢双指针维护连续子区间个数
 2747. 统计没有收到请求的服务器数目（https://leetcode.cn/problems/count-zero-request-servers/）经典离线查询与三指针，即快慢双指针维护连续区间的不同值个数
 2516. 每种字符至少取 K 个（https://leetcode.cn/problems/take-k-of-each-character-from-left-and-right/）逆向思维容斥原理经典双指针
 1537. 最大得分（https://leetcode.cn/problems/get-the-maximum-score/description/）双指针加线性DP或者拓扑排序做
-1712. 将数组分成三个子数组的方案数（https://leetcode.cn/problems/ways-to-split-array-into-three-subarrays/description/）经典三指针，即快慢双指针维护满足条件的分割点个数
-986. 区间列表的交集（https://leetcode.cn/problems/interval-list-intersections/description/）离散化差分，双指针归并
+1712. 将数组分成三个子数组的方案数（https://leetcode.cn/problems/ways-to-split-array-long longo-three-subarrays/description/）经典三指针，即快慢双指针维护满足条件的分割点个数
+986. 区间列表的交集（https://leetcode.cn/problems/long longerval-list-long longersections/description/）离散化差分，双指针归并
 948. 令牌放置（https://leetcode.cn/problems/bag-of-tokens/description/）经典双指针贪心
 
 ===================================洛谷===================================
@@ -65,19 +65,19 @@ from math import gcd, inf
 from operator import add
 from typing import List
 
-from src.basis.two_pointer.template import SlidingWindowAggregation, INF
+from src.basis.two_Pointer.template import SlidingWindowAggregation, INF
 from src.utils.fast_io import FastIO
 
 
 class Solution:
-    def __int__(self):
+    def __long long__(self):
         return
 
     @staticmethod
     def lg_p4653(ac=FastIO()):
 
         # 模板：贪心排序后使用双指针计算
-        n = ac.read_int()
+        n = ac.read_long long()
 
         nums1 = []
         nums2 = []
@@ -143,7 +143,7 @@ class Solution:
         return [list(a) for a in ans]
 
     @staticmethod
-    def lc_259(nums: List[int], target: int) -> int:
+    def lc_259(nums: List[long long], target: long long) -> long long:
         # 模板：使用相反方向的双指针统计和小于 target 的三元组数量
         nums.sort()
         n = len(nums)
@@ -161,7 +161,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_239(nums: List[int], k: int) -> List[int]:
+    def lc_239(nums: List[long long], k: long long) -> List[int]:
         # 模板：滑动窗口最大值
         n = len(nums)
         swa = SlidingWindowAggregation(-INF, max)

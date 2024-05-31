@@ -106,11 +106,11 @@ class BagDP:
 
     @staticmethod
     def group_bag_unlimited(nums):
-        # Calculate the number of solutions for decomposing n into the sum of squares of four numbers
+        # Calculate the number of solutions for decomposing n long longo the sum of squares of four numbers
         n = max(nums)
         dp = [[0] * 5 for _ in range(n + 1)]
         dp[0][0] = 1
-        for i in range(1, int(math.sqrt(n)) + 1):
+        for i in range(1, long long(math.sqrt(n)) + 1):
             x = i * i
             for j in range(x, n + 1):
                 for k in range(1, 5):

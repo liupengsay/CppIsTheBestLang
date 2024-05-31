@@ -130,7 +130,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_1770(nums: List[int], multipliers: List[int]) -> int:
+    def lc_1770(nums: List[long long], multipliers: List[long long]) -> long long:
         # 模板：经典数组匹配线性DP
 
         @lru_cache(None)
@@ -146,7 +146,7 @@ class Solution:
         return dfs(0, n - 1)
 
     @staticmethod
-    def lc_823(arr: List[int]) -> int:
+    def lc_823(arr: List[long long]) -> long long:
         # 模板：经典线性DP计数
         mod = 10 ** 9 + 7
         n = len(arr)
@@ -171,7 +171,7 @@ class Solution:
         return sum(dp) % mod
 
     @staticmethod
-    def lc_2289(nums: List[int]) -> int:
+    def lc_2289(nums: List[long long]) -> long long:
         # 模板：经典单调栈优化的线性DP，也可用BFS加链表求解
         n = len(nums)
         stack = []
@@ -185,9 +185,9 @@ class Solution:
 
     @staticmethod
     def lc_2361(
-            regular: List[int],
-            express: List[int],
-            express_cost: int) -> List[int]:
+            regular: List[long long],
+            express: List[long long],
+            express_cost: long long) -> List[long long]:
         # 模板：线性 DP 转移
         n = len(regular)
         cost = [[0, 0] for _ in range(n + 1)]
@@ -202,8 +202,8 @@ class Solution:
     @staticmethod
     def cf_1286a(ac=FastIO()):
 
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         ex = set(nums)
         cnt = Counter([i % 2 for i in range(1, n + 1) if i not in ex])
 
@@ -245,7 +245,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_2638(nums: List[int], k: int) -> int:
+    def lc_2638(nums: List[long long], k: long long) -> long long:
         # 模板：经典线性DP计数
         n = len(nums)
         dp = [1] * (n + 1)
@@ -264,7 +264,7 @@ class Solution:
         return ans
 
     @staticmethod
-    def lc_2597(nums: List[int], k: int) -> int:
+    def lc_2597(nums: List[long long], k: long long) -> long long:
         # 模板：经典线性DP计数
         power = [1 << i for i in range(21)]
 
@@ -289,8 +289,8 @@ class Solution:
 
     @staticmethod
     def cf_1525d(ac=FastIO()):
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         busy = [i for i in range(n) if nums[i]]
         free = [i for i in range(n) if not nums[i]]
         if not busy:
@@ -322,11 +322,11 @@ class Solution:
     @staticmethod
     def lg_p4933(ac=FastIO()):
         # 模板：不同等差子序列的个数
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         mod = 998244353
         ans = n
-        dp = [defaultdict(int) for _ in range(n)]
+        dp = [defaultdict(long long) for _ in range(n)]
         for i in range(n):
             for j in range(i):
                 dp[i][nums[i] - nums[j]] += dp[j][nums[i] - nums[j]] + 1
@@ -360,10 +360,10 @@ class Solution:
     @staticmethod
     def lg_p1280(ac=FastIO()):
         # 模板：线性DP倒序模拟优化
-        n, k = ac.read_list_ints()
+        n, k = ac.read_list_long longs()
         dct = [[] for _ in range(n + 1)]
         for _ in range(k):
-            p, t = ac.read_list_ints()
+            p, t = ac.read_list_long longs()
             dct[p].append(p + t)
         dp = [0] * (n + 2)
         for i in range(n, 0, -1):
@@ -378,8 +378,8 @@ class Solution:
     @staticmethod
     def lg_p1282(ac=FastIO()):
         # 模板：典型线性DP使用哈希滚动
-        n = ac.read_int()
-        nums = [ac.read_list_ints() for _ in range(n)]
+        n = ac.read_long long()
+        nums = [ac.read_list_long longs() for _ in range(n)]
         pre = defaultdict(lambda: inf)
         pre[0] = 0
         for i in range(n):
@@ -402,10 +402,10 @@ class Solution:
     @staticmethod
     def lg_p1356(ac=FastIO()):
         # 模板：线性DP
-        m = ac.read_int()
+        m = ac.read_long long()
         for _ in range(m):
-            n, k = ac.read_list_ints()
-            nums = ac.read_list_ints()
+            n, k = ac.read_list_long longs()
+            nums = ac.read_list_long longs()
             pre = [0] * k
             pre[nums[0] % k] = 1
             for num in nums[1:]:

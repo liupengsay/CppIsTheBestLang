@@ -2,16 +2,16 @@
 #include <vector>
 #include <algorithm>
 
-int bisect_right(const std::vector<int>& sorted_list, int target) {
+long long bisect_right(const std::vector<long long>& sorted_list, long long target) {
     return std::upper_bound(sorted_list.begin(), sorted_list.end(), target) - sorted_list.begin();
 }
 
-int main() {
-    std::vector<int> numbers = {1, 3, 5, 5, 7, 9};
+long long main() {
+    std::vector<long long> numbers = {1, 3, 5, 5, 7, 9};
 
-    int target = 6;
+    long long target = 6;
 
-    int index = bisect_right(numbers, target);
+    long long index = bisect_right(numbers, target);
 
     std::cout << "Insert position for " << target << ": " << index << std::endl;
 

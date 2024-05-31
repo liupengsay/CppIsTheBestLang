@@ -12,12 +12,12 @@
 1024. 视频拼接（https://leetcode.cn/problems/video-stitching/）转换为最少区间覆盖问题
 1520. 最多的不重叠子字符串（https://leetcode.cn/problems/maximum-number-of-non-overlapping-substrings/）转化为最多不相交区间进行处理
 1353. 最多可以参加的会议数目（https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/）贪心选取最多的点，使得每个点一一对应一个区间
-2406. 将区间分为最少组数（https://leetcode.cn/problems/divide-intervals-into-minimum-number-of-groups/）将区间分为不相交的最少组数使用贪心与差分数组计数解决
-435. 无重叠区间（https://leetcode.cn/problems/non-overlapping-intervals/）最多不相交的区间，使用贪心或者二分DP
+2406. 将区间分为最少组数（https://leetcode.cn/problems/divide-long longervals-long longo-minimum-number-of-groups/）将区间分为不相交的最少组数使用贪心与差分数组计数解决
+435. 无重叠区间（https://leetcode.cn/problems/non-overlapping-long longervals/）最多不相交的区间，使用贪心或者二分DP
 763. 划分字母区间（https://leetcode.cn/problems/partition-labels/）经典将区间合并为不相交的区间
 6313. 统计将重叠区间合并成组的方案数（https://leetcode.cn/contest/biweekly-contest-99/problems/count-ways-to-group-overlapping-ranges/）经典将区间合并为不相交的区间，再使用快速幂计数
 2345. 寻找可见山的数量（https://leetcode.cn/problems/finding-the-number-of-visible-mountains/）二维偏序，转换为区间包含问题
-757. 设置交集大小至少为2（https://leetcode.cn/problems/set-intersection-size-at-least-two/）贪心选取最少的点集合，使得每个区间包含其中至少两个点
+757. 设置交集大小至少为2（https://leetcode.cn/problems/set-long longersection-size-at-least-two/）贪心选取最少的点集合，使得每个区间包含其中至少两个点
 2589. 完成所有任务的最少时间（https://leetcode.cn/problems/minimum-time-to-complete-all-tasks/）贪心选取最少的点集合，使得每个区间包含其中要求的k个点
 LCP 32. 批量处理任务（https://leetcode.cn/problems/t3fKg1/）贪心选取最少的点集合，使得每个区间包含其中要求的k个点
 
@@ -68,10 +68,10 @@ class Solution:
     @staticmethod
     def lg_p1496(ac=FastIO()):
         # 模板：经典区间合并确定覆盖范围
-        n = ac.read_int()
+        n = ac.read_long long()
         lst = []
         for _ in range(n):
-            a, b = [int(w) for w in input().strip().split() if w]
+            a, b = [long long(w) for w in input().strip().split() if w]
             lst.append([a, b])
         ans = sum(b - a for a, b in Range().merge(lst))
         ac.st(ans)
@@ -95,7 +95,7 @@ class Solution:
         return Range().cover_less(0, n, lst, True)
 
     @staticmethod
-    def lc_1326_2(n: int, ranges: List[int]) -> int:
+    def lc_1326_2(n: long long, ranges: List[long long]) -> long long:
         # 模板：最少区间覆盖模板题
         lst = []
         for i, r in enumerate(ranges):
@@ -103,33 +103,33 @@ class Solution:
             a = a if a > 0 else 0
             b = b if b < n else n
             lst.append([a, b])
-        return Range().minimum_interval_coverage(lst, n, True)
+        return Range().minimum_long longerval_coverage(lst, n, True)
 
     @staticmethod
-    def lc_1024_1(clips, time) -> int:
+    def lc_1024_1(clips, time) -> long long:
         # 模板：最少区间覆盖模板题
         return Range().cover_less(0, time, clips)
 
     @staticmethod
-    def lc_1024_2(clips: List[List[int]], time: int) -> int:
+    def lc_1024_2(clips: List[List[long long]], time: long long) -> long long:
         # 模板：最少区间覆盖模板题
-        return Range().minimum_interval_coverage(clips, time, True)
+        return Range().minimum_long longerval_coverage(clips, time, True)
 
     @staticmethod
     def lg_p2684(ac=FastIO()):
-        n, t = ac.read_list_ints()
-        nums = [ac.read_list_ints() for _ in range(n)]
+        n, t = ac.read_list_long longs()
+        nums = [ac.read_list_long longs() for _ in range(n)]
         ac.st(Range().cover_less(1, t, nums))
         return
 
     @staticmethod
-    def lc_435(intervals):
+    def lc_435(long longervals):
         # 模板：合并区间
-        n = len(intervals)
-        return n - Range().disjoint_most(intervals)
+        n = len(long longervals)
+        return n - Range().disjolong long_most(long longervals)
 
     @staticmethod
-    def lc_763(s: str) -> List[int]:
+    def lc_763(s: str) -> List[long long]:
         # 模板：合并区间
         dct = defaultdict(list)
         for i, w in enumerate(s):
@@ -143,7 +143,7 @@ class Solution:
         return [y - x + 1 for x, y in ans]
 
     @staticmethod
-    def lc_6313(ranges: List[List[int]]) -> int:
+    def lc_6313(ranges: List[List[long long]]) -> long long:
         # 模板：合并为不相交的区间
         cnt = len(Range().merge(ranges))
         mod = 10 ** 9 + 7
@@ -153,8 +153,8 @@ class Solution:
     def cf_1102e(ac=FastIO()):
         # 模板：区间合并为不相交的区间
         mod = 998244353
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         dct = defaultdict(list)
         for i in range(n):
             dct[nums[i]].append(i)
@@ -166,8 +166,8 @@ class Solution:
     @staticmethod
     def cf_1426d(ac=FastIO()):
         # 模板：选取最少的点集合，使得每个区间包含其中至少一个点
-        n = ac.read_int()
-        nums = ac.read_list_ints()
+        n = ac.read_long long()
+        nums = ac.read_list_long longs()
         pre = 0
         dct = dict()
         dct[pre] = -1
@@ -195,8 +195,8 @@ class Solution:
     @staticmethod
     def ac_112(ac=FastIO()):
         # 模板：区间类型的贪心
-        n, d = ac.read_list_ints()
-        lst = [ac.read_list_ints() for _ in range(n)]
+        n, d = ac.read_list_long longs()
+        lst = [ac.read_list_long longs() for _ in range(n)]
         if any(abs(y) > d for _, y in lst):
             ac.st(-1)
             return
@@ -219,8 +219,8 @@ class Solution:
     @staticmethod
     def lg_p1668(ac=FastIO()):
         # 模板：最少区间覆盖问题
-        n, t = ac.read_list_ints()
-        lst = [ac.read_list_ints() for _ in range(n)]
+        n, t = ac.read_list_long longs()
+        lst = [ac.read_list_long longs() for _ in range(n)]
         ans = Range().cover_less(1, t, lst, False)
         ac.st(ans)
         return
@@ -228,9 +228,9 @@ class Solution:
     @staticmethod
     def lg_p1668_2(ac=FastIO()):
         # 模板：最少区间覆盖问题
-        n, t = ac.read_list_ints()
+        n, t = ac.read_list_long longs()
         t -= 1
-        lst = [ac.read_list_ints_minus_one() for _ in range(n)]
+        lst = [ac.read_list_long longs_minus_one() for _ in range(n)]
         ans = Range().cover_less(0, t, lst, False)
         ac.st(ans)
         return
@@ -238,8 +238,8 @@ class Solution:
     @staticmethod
     def lg_p2887(ac=FastIO()):
         # 模板：最多点匹配覆盖，每条线段选一个点匹配，最多匹配数有点类似二分图
-        n, m = ac.read_list_ints()
-        nums = [ac.read_list_ints() for _ in range(n)]
+        n, m = ac.read_list_long longs()
+        nums = [ac.read_list_long longs() for _ in range(n)]
         nums.sort(key=lambda it: it[1])
         pos = [ac.read_list_ints() for _ in range(m)]
         pos.sort(key=lambda it: it[0])

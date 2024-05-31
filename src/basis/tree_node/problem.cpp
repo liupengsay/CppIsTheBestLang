@@ -21,19 +21,19 @@ from src.basis.tree_node.template import TreeNode, TreeOrder
 
 
 class Solution:
-    def __int__(self):
+    def __long long__(self):
         return
 
     @staticmethod
-    def lc_145(root: Optional[TreeNode]) -> List[int]:
+    def lc_145(root: Optional[TreeNode]) -> List[long long]:
         return TreeOrder().post_order(root)
 
     @staticmethod
-    def lc_94(root: Optional[TreeNode]) -> List[int]:
+    def lc_94(root: Optional[TreeNode]) -> List[long long]:
         return TreeOrder().in_order(root)
 
     @staticmethod
-    def lc_144(root: Optional[TreeNode]) -> List[int]:
+    def lc_144(root: Optional[TreeNode]) -> List[long long]:
         return TreeOrder().pre_order(root)
 
     @staticmethod

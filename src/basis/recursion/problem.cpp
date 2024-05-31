@@ -28,7 +28,7 @@ P1228 地毯填补问题（https://www.luogu.com.cn/problem/P1228）四叉树分
 P1185 绘制二叉树（https://www.luogu.com.cn/problem/P1185）二叉树递归进行绘制
 
 ================================CodeForces================================
-C. Painting Fence（https://codeforces.com/contest/448/problem/C）贪心递归DP
+C. Palong longing Fence（https://codeforces.com/contest/448/problem/C）贪心递归DP
 
 98. 分形之城（https://www.acwing.com/problem/content/100/）四叉树递归与坐标旋转变换
 93. 递归实现组合型枚举（https://www.acwing.com/problem/content/95/）递归与迭代两种方式实现组合数选取
@@ -43,7 +43,7 @@ class Solution:
         return
 
     @staticmethod
-    def lc_880(t: str, m: int) -> str:
+    def lc_880(t: str, m: long long) -> str:
         # 模板：经典递归计算模拟
 
         def dfs(s, k):
@@ -51,9 +51,9 @@ class Solution:
             cur = 0
             for i in range(n):
                 if s[i].isnumeric():
-                    d = int(s[i])
+                    d = long long(s[i])
                     if cur * d >= k:
-                        return dfs(s[:i], k % cur + cur * int(k % cur == 0))
+                        return dfs(s[:i], k % cur + cur * long long(k % cur == 0))
                     cur *= d
                 else:
                     if cur + 1 == k:
@@ -62,7 +62,7 @@ class Solution:
 
         return dfs(t, m)
 
-    def lc_889(self, preorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+    def lc_889(self, preorder: List[long long], postorder: List[long long]) -> Optional[TreeNode]:
         # 模板：使用递归经典分治构造
         if not preorder:
             return
@@ -80,7 +80,7 @@ class Solution:
         return ans
 
     @lru_cache(None)
-    def lc_894(self, n: int) -> List[Optional[TreeNode]]:
+    def lc_894(self, n: long long) -> List[Optional[TreeNode]]:
 
         # 模板：经典类似卡特兰数的递归模拟计算生成
         if n % 2 == 0:
@@ -99,7 +99,7 @@ class Solution:
         return ans
 
     @lru_cache(None)
-    def lc_932(self, n: int) -> List[int]:
+    def lc_932(self, n: long long) -> List[long long]:
         # 模板：使用递归分治进行构造经典
         if n == 1:
             return [1]
@@ -125,7 +125,7 @@ class Solution:
                 return
             c = "(" + str(d) + ")"
             lst = s.split(c)
-            root = TreeNode(int(lst[0]))
+            root = TreeNode(long long(lst[0]))
             if len(lst) > 1:
                 root.left = dfs(lst[1], d + 1)
             if len(lst) > 2:
@@ -135,7 +135,7 @@ class Solution:
         return dfs(ans, 1)
 
     @staticmethod
-    def lc_1345(a: int, b: int) -> str:
+    def lc_1345(a: long long, b: long long) -> str:
 
         # 模板：经典递归计算模拟
         def dfs(n, k):
@@ -216,8 +216,8 @@ class Solution:
     @staticmethod
     def cf_448c(ac=FastIO()):
         # 模板：贪心递归DP
-        ac.read_int()
-        nums = ac.read_list_ints()
+        ac.read_long long()
+        nums = ac.read_list_long longs()
 
         @ac.bootstrap
         def dfs(arr):
@@ -244,8 +244,8 @@ class Solution:
     def ac_98(ac=FastIO()):
 
         # 模板：四叉树递归与坐标旋转变换
-        for _ in range(ac.read_int()):
-            n, a, b = ac.read_list_ints()
+        for _ in range(ac.read_long long()):
+            n, a, b = ac.read_list_long longs()
             a -= 1
             b -= 1
 

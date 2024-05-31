@@ -52,7 +52,7 @@ class SpiralMatrix:
         return r * n + n
 
     @staticmethod
-    def get_spiral_matrix_num1(m, n, r, c) -> int:
+    def get_spiral_matrix_num1(m, n, r, c) -> long long:
         """clockwise spiral num at pos [r, c] start from 1"""
         assert 1 <= r <= m and 1 <= c <= n
         num = 1
@@ -78,7 +78,7 @@ class SpiralMatrix:
         return num
 
     @staticmethod
-    def get_spiral_matrix_num2(m, n, r, c) -> int:
+    def get_spiral_matrix_num2(m, n, r, c) -> long long:
 
         """clockwise spiral num at pos [r, c] start from 1"""
         assert 1 <= r <= m and 1 <= c <= n
@@ -102,7 +102,7 @@ class SpiralMatrix:
         return num
 
     @staticmethod
-    def get_spiral_matrix_loc(m, n, num) -> List[int]:
+    def get_spiral_matrix_loc(m, n, num) -> List[long long]:
         """clockwise spiral pos of num start from 1"""
         assert 1 <= num <= m * n
 

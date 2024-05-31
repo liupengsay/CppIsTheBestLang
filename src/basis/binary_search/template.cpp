@@ -3,10 +3,10 @@
 class BinarySearch {
 public:
 
-    static int find_int_left(int low, int high, const std::function<bool(int)> &check) {
+    static long long find_long long_left(long long low, long long high, const std::function<bool(long long)> &check) {
         // 模板: 整数范围内二分查找，选择最靠左满足check
         while (low < high - 1) {
-            int mid = low + (high - low) / 2;
+            long long mid = low + (high - low) / 2;
             if (check(mid)) {
                 high = mid;
             } else {
@@ -16,10 +16,10 @@ public:
         return check(low) ? low : high;
     }
 
-    static int find_int_right(int low, int high, const std::function<bool(int)> &check) {
+    static long long find_long long_right(long long low, long long high, const std::function<bool(long long)> &check) {
         // 模板: 整数范围内二分查找，选择最靠右满足check
         while (low < high - 1) {
-            int mid = low + (high - low) / 2;
+            long long mid = low + (high - low) / 2;
             if (check(mid)) {
                 low = mid;
             } else {
