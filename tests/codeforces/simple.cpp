@@ -3,13 +3,13 @@
 #include <string>
 #include <algorithm>
 #define int128 __int128_t
-#define long long64 __long long64_t
+#define int64 __int64_t
 #define ac FastIO
 
 
 class FastIO {
 public:
-    static long long read_long long() {
+    static long long read_int() {
         long long num;
         std::cin >> num;
         return num;
@@ -21,7 +21,7 @@ public:
         return num;
     }
 
-    static std::vector<long long> read_list_long longs() {
+    static std::vector<long long> read_list_ints() {
         long long n;
         std::cin >> n;
         std::vector<long long> nums(n);
@@ -31,7 +31,7 @@ public:
         return nums;
     }
 
-    static std::vector<long long> read_list_long longs_minus_one() {
+    static std::vector<long long> read_list_ints_minus_one() {
         long long n;
         std::cin >> n;
         std::vector<long long> nums(n);
@@ -130,7 +130,7 @@ public:
             return res;
         };
 
-        long long n = ac::read_long long();
+        long long n = ac::read_int();
         std::vector<std::pair<long long, long long>> nums(n);
         for (long long i = 0; i < n; ++i) {
             std::cin >> nums[i].first >> nums[i].second;
@@ -155,7 +155,7 @@ public:
 };
 
 
-long long main() {
+int main() {
     Solution::main();
     return 0;
 }
