@@ -1,212 +1,186 @@
-import math
-from functools import reduce
-from math import lcm, gcd
-from operator import or_, and_
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stack>
+#include <algorithm>
+#include <climits>
+#include <tuple>
+#include <iostream>
+#include <vector>
+#include <cassert>
+#include <cmath>
+#include <algorithm>
+#include <functional>
+
+using namespace std;
+
+class SuffixArray {
+public:
+    SuffixArray() {}
+
+    static tuple<vector<long long>, vector<long long>, vector<long long>>
+    build(const vector<long long> &s, long long sig) {
+        long long n = s.size();
+        vector<long long> sa(n), rk(n), tmp(n), height(n);
+        for (long long i = 0; i < n; ++i) sa[i] = i, rk[i] = s[i];
+        long long ll = 0;
+        while (true) {
+            vector<long long> p;
+            for (long long i = n - ll; i < n; ++i) p.push_back(i);
+            for (long long i = 0; i < n; ++i) if (sa[i] >= ll) p.push_back(sa[i] - ll);
+            vector<long long> cnt(sig, 0);
+            for (long long i = 0; i < n; ++i) cnt[rk[i]]++;
+            for (long long i = 1; i < sig; ++i) cnt[i] += cnt[i - 1];
+            for (long long i = n - 1; i >= 0; --i) sa[--cnt[rk[p[i]]]] = p[i];
+            auto equal = [&rk, n](long long i, long long j, long long l) {
+                if (rk[i] != rk[j]) return false;
+                if (i + l >= n && j + l >= n) return true;
+                if (i + l < n && j + l < n) return rk[i + l] == rk[j + l];
+                return false;
+            };
+            sig = 0;
+            for (long long i = 0; i < n; ++i) tmp[i] = 0;
+            tmp[sa[0]] = 0;
+            for (long long i = 1; i < n; ++i) tmp[sa[i]] = equal(sa[i], sa[i - 1], ll) ? sig : ++sig;
+
+            for (long long i = 0; i < n; ++i) rk[i] = tmp[i];
+            if (++sig == n) break;
+            ll = ll > 0 ? (ll << 1) : 1;
+        }
+        long long k = 0;
+        for (long long i = 0; i < n; ++i) {
+            if (rk[i] == 0) continue;
+            long long j = sa[rk[i] - 1];
+            while (i + k < n && j + k < n && s[i + k] == s[j + k]) k++;
+            height[rk[i]] = k;
+            k = k - 1 < 0 ? 0 : k - 1;
+        }
+        return make_tuple(sa, rk, height);
+    }
+};
+
+class SparseTable {
+public:
+    SparseTable(const std::vector<long long> &lst, long long (*fun)(long long, long long)) {
+        long long n = lst.size();
+        this->fun = fun;
+        this->n = n;
+
+        bit.resize(n + 1);
+        long long l = 1, r = 2, v = 0;
+        while (true) {
+            long long flag = 0;
+            for (long long i = l; i < r; ++i) {
+                if (i >= n + 1) {
+                    flag = 1;
+                    break;
+                }
+                bit[i] = v;
+            }
+            if (!flag) {
+                l *= 2;
+                r *= 2;
+                ++v;
+                continue;
+            }
+            break;
+        }
 
 
-class SparseTable1:
-    def __init__(self, lst, fun="max"):
-        # Static interval queries can be performed as long as fun satisfies monotonicity
-        self.fun = fun
-        self.n = len(lst)
-        self.lst = lst
-        self.f = [[0] * (int(math.log2(self.n)) + 1) for _ in range(self.n+1)]
-        self.gen_sparse_table()
+        st.resize(v + 1, std::vector<long long>(n));
+        st[0] = lst;
+        for (long long i = 1; i <= v; ++i) {
+            for (long long j = 0; j <= n - (1 << i); ++j) {
+                st[i][j] = fun(st[i - 1][j], st[i - 1][j + (1 << (i - 1))]);
+            }
+        }
+    }
 
-        return
+    long long query(long long left, long long right) {
+        assert(0 <= left && left <= right && right < n);
+        long long pos = bit[right - left + 1];
+        return fun(st[pos][left], st[pos][right - (1 << pos) + 1]);
+    }
 
-    def gen_sparse_table(self):
-        # like multiplication method for tree_lca
-        for i in range(1, self.n + 1):
-            self.f[i][0] = self.lst[i - 1]
-        for j in range(1, int(math.log2(self.n)) + 1):
-            for i in range(1, self.n - (1 << j) + 2):
-                a = self.f[i][j - 1]
-                b = self.f[i + (1 << (j - 1))][j - 1]
-                if self.fun == "max":
-                    self.f[i][j] = a if a > b else b
-                elif self.fun == "min":
-                    self.f[i][j] = a if a < b else b
-                elif self.fun == "gcd":
-                    self.f[i][j] = math.gcd(a, b)
-                elif self.fun == "lcm":
-                    self.f[i][j] = a*b//math.gcd(a, b)
-                elif self.fun == "and":
-                    self.f[i][j] = a & b
-                elif self.fun == "or":
-                    self.f[i][j] = a | b
+private:
+    std::vector<long long> bit;
+    std::vector<std::vector<long long>> st;
+    long long n;
 
-        return
+    long long (*fun)(long long, long long);
+};
 
-    def query(self, left, right):
-        # index start from 1
-        assert 1 <= left <= right <= self.n
-        k = int(math.log2(right - left + 1))
-        a = self.f[left][k]
-        b = self.f[right - (1 << k) + 1][k]
-        if self.fun == "max":
-            return a if a > b else b
-        elif self.fun == "min":
-            return a if a < b else b
-        elif self.fun == "gcd":
-            return math.gcd(a, b)
-        elif self.fun == "lcm":
-            return math.lcm(a, b)
-        elif self.fun == "and":
-            return a & b
-        elif self.fun == "or":
-            return a | b
+int main() {
+    long long cases;
+    std::cin >> cases;
+    for (long long _ = 0; _ < cases; ++_) {
+        long long n;
+        std::cin >> n;
+        std::vector<long long> s(n);
+        for (long long i = 0; i < n; ++i) {
+            char w;
+            cin >> w;
+            s[i] = w - 'a';
+        }
+        auto [sa, rk, nums] = SuffixArray::build(s, 26);
 
 
-class SparseTable2:
-    def __init__(self, data, fun="max"):
-        self.n = len(data)
-        self.note = [0] * (self.n + 1)
-        self.fun = fun
-        left, right, v = 1, 2, 0
-        while True:
-            for i in range(left, right):
-                if i >= len(self.note):
-                    break
-                self.note[i] = v
-            else:
-                left *= 2
-                right *= 2
-                v += 1
-                continue
-            break
-
-        self.ST = [[0] * len(data) for _ in range(self.note[-1]+1)]
-        self.ST[0] = data
-        for i in range(1, len(self.ST)):
-            for j in range(len(data) - (1 << i) + 1):
-                a, b = self.ST[i-1][j], self.ST[i-1][j + (1 << (i-1))]
-                if self.fun == "max":
-                    self.ST[i][j] = a if a > b else b
-                elif self.fun == "min":
-                    self.ST[i][j] = a if a < b else b
-                else:
-                    self.ST[i][j] = math.gcd(a, b)
-        return
-
-    def query(self, left, right):
-        # index start from index 0
-        assert 0 <= left <= right <= self.n - 1
-        pos = self.note[right-left+1]
-        a, b = self.ST[pos][left], self.ST[pos][right - (1 << pos) + 1]
-        if self.fun == "max":
-            return a if a > b else b
-        elif self.fun == "min":
-            return a if a < b else b
-        else:
-            return math.gcd(a, b)
+        SparseTable st(nums, [](long long a, long long b) { return std::min(a, b); });
+        // Function to compute LCP between two suffixes
+        auto lcp = [&](long long ii, long long jj) {
+            long long ri, rj;
+            ri = rk[ii];
+            rj = rk[jj];
+            if (ri > rj) {
+                swap(ri, rj);
+            }
+            if (ri == rj) {
+                return n - sa[ri];
+            }
+            return st.query(ri + 1, rj);
+        };
 
 
-class SparseTable2D:
-    def __init__(self, matrix, method="max"):
-        m, n = len(matrix), len(matrix[0])
-        a, b = int(math.log2(m)) + 1, int(math.log2(n)) + 1
+        // Function to compare two suffixes
+        auto compare = [&](std::pair<long long, long long> a, std::pair<long long, long long> b) {
+            long long i1 = a.first;
+            long long j1 = a.second;
 
-        if method == "max":
-            self.fun = self.max
-        elif method == "min":
-            self.fun = self.min
-        elif method == "gcd":
-            self.fun = self.gcd
-        elif method == "lcm":
-            self.fun = self.min
-        elif method == "or":
-            self.fun = self._or
-        else:
-            self.fun = self._and
-
-        self.dp = [[[[0 for _ in range(b)] for _ in range(a)] for _ in range(1000)] for _ in range(1000)]
-
-        for i in range(a):
-            for j in range(b):
-                for x in range(m - (1 << i) + 1):
-                    for y in range(n - (1 << j) + 1):
-                        if i == 0 and j == 0:
-                            self.dp[x][y][i][j] = matrix[x][y]
-                        elif i == 0:
-                            self.dp[x][y][i][j] = self.fun([self.dp[x][y][i][j - 1],
-                                                            self.dp[x][y + (1 << (j - 1))][i][j - 1]])
-                        elif j == 0:
-                            self.dp[x][y][i][j] = self.fun([self.dp[x][y][i - 1][j],
-                                                            self.dp[x + (1 << (i - 1))][y][i - 1][j]])
-                        else:
-                            self.dp[x][y][i][j] = self.fun([self.dp[x][y][i - 1][j - 1],
-                                                            self.dp[x + (1 << (i - 1))][y][i - 1][j - 1],
-                                                            self.dp[x][y + (1 << (j - 1))][i - 1][j - 1],
-                                                            self.dp[x + (1 << (i - 1))][y + (1 << (j - 1))][i - 1][j - 1]])
-        return
-
-    @staticmethod
-    def max(args):
-        return reduce(max, args)
-
-    @staticmethod
-    def min(args):
-        return reduce(min, args)
-
-    @staticmethod
-    def gcd(args):
-        return reduce(gcd, args)
-
-    @staticmethod
-    def lcm(args):
-        return reduce(lcm, args)
-
-    @staticmethod
-    def _or(args):
-        return reduce(or_, args)
-
-    @staticmethod
-    def _and(args):
-        return reduce(and_, args)
-
-    def query(self, x, y, x1, y1):
-        # index start from 0 and left up corner is (x, y) and right down corner is (x1, y1)
-        k = int(math.log2(x1 - x + 1))
-        p = int(math.log2(y1 - y + 1))
-        ans = self.fun([self.dp[x][y][k][p],
-                        self.dp[x1 - (1 << k) + 1][y][k][p],
-                        self.dp[x][y1 - (1 << p) + 1][k][p],
-                        self.dp[x1 - (1 << k) + 1][y1 - (1 << p) + 1][k][p]])
-        return ans
+            long long i2 = b.first;
+            long long j2 = b.second;
+            long long x = lcp(i1, i2);
+            x = std::min(x, j1 - i1 + 1);
+            x = std::min(x, j2 - i2 + 1);
+            if (x == j1 - i1 + 1) {
+                if (x == j2 - i2 + 1) {
+                    return i1 < i2 ? -1 : 1;
+                }
+                return -1;
+            }
 
 
-class SparseTableIndex:
-    def __init__(self, lst, fun="max"):
-        # as long as Fun satisfies monotonicity
-        # static interval queries can be performed on the index where the maximum is located
-        self.fun = fun
-        self.n = len(lst)
-        self.lst = lst
-        self.f = [[0] * (int(math.log2(self.n)) + 1)
-                  for _ in range(self.n + 1)]
-        self.gen_sparse_table()
-        return
-
-    def gen_sparse_table(self):
-        for i in range(1, self.n + 1):
-            self.f[i][0] = i - 1
-        for j in range(1, int(math.log2(self.n)) + 1):
-            for i in range(1, self.n - (1 << j) + 2):
-                a = self.f[i][j - 1]
-                b = self.f[i + (1 << (j - 1))][j - 1]
-                if self.fun == "max":
-                    self.f[i][j] = a if self.lst[a] > self.lst[b] else b
-                elif self.fun == "min":
-                    self.f[i][j] = a if self.lst[a] < self.lst[b] else b
-        return
-
-    def query(self, left, right):
-        assert 1 <= left <= right <= self.n
-        k = int(math.log2(right - left + 1))
-        a = self.f[left][k]
-        b = self.f[right - (1 << k) + 1][k]
-        if self.fun == "max":
-            return a if self.lst[a] > self.lst[b] else b
-        elif self.fun == "min":
-            return a if self.lst[a] < self.lst[b] else b
+            if (x == j2 - i2 + 1) {
+                return 1;
+            }
+            return s[i1 + x] < s[i2 + x] ? -1 : 1;
+        };
+        std::vector<long long> stack = {n};
+        for (long long i = n - 1; i >= 0; --i) {
+            while (stack.size() >= 2 &&
+                   compare({stack.back(), stack[stack.size() - 2] - 1}, {i, stack[stack.size() - 2] - 1}) == -1) {
+                stack.pop_back();
+            }
+            stack.push_back(i);
+        }
+        string ans;
+        long long right = n;
+        for (size_t i = 1; i < stack.size(); ++i) {
+            for (long long j = stack[i]; j < right; j++) {
+                ans += static_cast<char>('a' + s[j]);;
+            }
+            right = stack[i];
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}

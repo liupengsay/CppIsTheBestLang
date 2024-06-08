@@ -1,135 +1,187 @@
-"""
-算法：后缀数组
-功能：生成字符串的后缀排序
-参考：OI WiKi（https://oi-wiki.org/string/sa/）
-题目：
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stack>
+#include <algorithm>
+#include <climits>
+#include <tuple>
+#include <iostream>
+#include <vector>
+#include <cassert>
+#include <cmath>
+#include <algorithm>
+#include <functional>
 
-===================================力扣===================================
-1754. 构造字典序最大的合并字符串（https://leetcode.cn/problems/largest-merge-of-two-strings/）
-1698. 字符串的不同子字符串个数（https://leetcode.cn/problems/number-of-distinct-substrings-in-a-string/）经典后缀数组应用题，利用height特性
+using namespace std;
 
-===================================洛谷===================================
-P3809 【模板】后缀排序（https://www.luogu.com.cn/problem/P3809）
+class SuffixArray {
+public:
+    SuffixArray() {}
 
-===================================AcWing=====================================
-140. 后缀数组（https://www.acwing.com/problem/content/142/）后缀数组模板题
+    static tuple<vector<long long>, vector<long long>, vector<long long>>
+    build(const vector<long long> &s, long long sig) {
+        long long n = s.size();
+        vector<long long> sa(n), rk(n), tmp(n), height(n);
+        for (long long i = 0; i < n; ++i) sa[i] = i, rk[i] = s[i];
+        long long ll = 0;
+        while (true) {
+            vector<long long> p;
+            for (long long i = n - ll; i < n; ++i) p.push_back(i);
+            for (long long i = 0; i < n; ++i) if (sa[i] >= ll) p.push_back(sa[i] - ll);
+            vector<long long> cnt(sig, 0);
+            for (long long i = 0; i < n; ++i) cnt[rk[i]]++;
+            for (long long i = 1; i < sig; ++i) cnt[i] += cnt[i - 1];
+            for (long long i = n - 1; i >= 0; --i) sa[--cnt[rk[p[i]]]] = p[i];
+            auto equal = [&rk, n](long long i, long long j, long long l) {
+                if (rk[i] != rk[j]) return false;
+                if (i + l >= n && j + l >= n) return true;
+                if (i + l < n && j + l < n) return rk[i + l] == rk[j + l];
+                return false;
+            };
+            sig = 0;
+            for (long long i = 0; i < n; ++i) tmp[i] = 0;
+            tmp[sa[0]] = 0;
+            for (long long i = 1; i < n; ++i) tmp[sa[i]] = equal(sa[i], sa[i - 1], ll) ? sig : ++sig;
 
-Morgan and a String（https://www.hackerrank.com/challenges/morgan-and-a-string/problem?isFullScreen=true）拼接两个字符串使得字典序最小
-Suffix Array（https://judge.yosupo.jp/problem/suffixarray）
-1 Number of Substrings（https://judge.yosupo.jp/problem/number_of_substrings）use sa to compute number of different substring
+            for (long long i = 0; i < n; ++i) rk[i] = tmp[i];
+            if (++sig == n) break;
+            ll = ll > 0 ? (ll << 1) : 1;
+        }
+        long long k = 0;
+        for (long long i = 0; i < n; ++i) {
+            if (rk[i] == 0) continue;
+            long long j = sa[rk[i] - 1];
+            while (i + k < n && j + k < n && s[i + k] == s[j + k]) k++;
+            height[rk[i]] = k;
+            k = k - 1 < 0 ? 0 : k - 1;
+        }
+        return make_tuple(sa, rk, height);
+    }
+};
 
-"""
-from src.strings.suffix_array.template import SuffixArray
-from src.utils.fast_io import FastIO
+class SparseTable {
+public:
+    SparseTable(const std::vector<long long> &lst, long long (*fun)(long long, long long)) {
+        long long n = lst.size();
+        this->fun = fun;
+        this->n = n;
+
+        bit.resize(n + 1);
+        long long l = 1, r = 2, v = 0;
+        while (true) {
+            long long flag = 0;
+            for (long long i = l; i < r; ++i) {
+                if (i >= n + 1) {
+                    flag = 1;
+                    break;
+                }
+                bit[i] = v;
+            }
+            if (!flag) {
+                l *= 2;
+                r *= 2;
+                ++v;
+                continue;
+            }
+            break;
+        }
 
 
-class Solution:
-    def __init__(self):
-        return
+        st.resize(v + 1, std::vector<long long>(n));
+        st[0] = lst;
+        for (long long i = 1; i <= v; ++i) {
+            for (long long j = 0; j <= n - (1 << i); ++j) {
+                st[i][j] = fun(st[i - 1][j], st[i - 1][j + (1 << (i - 1))]);
+            }
+        }
+    }
 
-    @staticmethod
-    def lc_1754_1(word1: str, word2: str) -> str:
-        # 模板：后缀数组计算后缀的字典序大小，贪心拼接两个字符串使得字典序最大
-        ind = {chr(ord("a") - 1 + i): i for i in range(27)}
-        word = word1 + chr(ord("a")-1) + word2
-        sa, rk, height = SuffixArray(ind).get_array(word)
-        m, n = len(word1), len(word2)
-        i = 0
-        j = 0
-        merge = ""
-        while i < m and j < n:
-            if rk[i] > rk[j + m + 1]:
-                merge += word1[i]
-                i += 1
-            else:
-                merge += word2[j]
-                j += 1
-        merge += word1[i:]
-        merge += word2[j:]
-        return merge
+    long long query(long long left, long long right) {
+        assert(0 <= left && left <= right && right < n);
+        long long pos = bit[right - left + 1];
+        return fun(st[pos][left], st[pos][right - (1 << pos) + 1]);
+    }
 
-    @staticmethod
-    def lc_1754_2(word1: str, word2: str) -> str:
-        # 模板：贪心比较后缀的字典序大小
-        merge = ""
-        i = j = 0
-        m, n = len(word1), len(word2)
-        while i < m and j < n:
-            if word1[i:] > word2[j:]:
-                merge += word1[i]
-                i += 1
-            else:
-                merge += word2[j]
-                j += 1
-        merge += word1[i:]
-        merge += word2[j:]
-        return merge
+private:
+    std::vector<long long> bit;
+    std::vector<std::vector<long long>> st;
+    long long n;
 
-    @staticmethod
-    def hr_1(ac=FastIO()):
-        # 模板：拼接两个字符串使得字典序最小
-        for _ in range(ac.read_int()):
-            word1 = ac.read_str().lower()
-            word2 = ac.read_str().lower()
+    long long (*fun)(long long, long long);
+};
 
-            ind = {chr(ord("a") + i): i for i in range(27)}
-            word = word1 + chr(ord("z")+1) + word2 + chr(ord("z")+1)
-            sa, rk, height = SuffixArray(ind).get_array(word)
-            m, n = len(word1), len(word2)
-            i = 0
-            j = 0
-            merge = []
-            while i < m and j < n:
-                if rk[i] < rk[j + m + 1]:
-                    merge.append(word1[i])
-                    i += 1
-                else:
-                    merge.append(word2[j])
-                    j += 1
-            merge.extend(list(word1[i:]))
-            merge.extend(list(word2[j:]))
-            ans = "".join(merge)
-            ac.st(ans.upper())
+int main() {
+    // url https://www.codechef.com/problems/CABABAA
+    long long cases;
+    std::cin >> cases;
+    for (long long _ = 0; _ < cases; ++_) {
+        long long n;
+        std::cin >> n;
+        std::vector<long long> s(n);
+        for (long long i = 0; i < n; ++i) {
+            char w;
+            cin >> w;
+            s[i] = w - 'a';
+        }
+        auto [sa, rk, nums] = SuffixArray::build(s, 26);
 
-        return
 
-    @staticmethod
-    def lg_3809(ac=FastIO()):
-        # 模板：计算数组的后缀排序
-        words = [str(x) for x in range(10)] + [chr(i + ord("A")) for i in range(26)] + [chr(i + ord("a")) for i in
-                                                                                        range(26)]
-        ind = {st: i for i, st in enumerate(words)}
-        s = ac.read_str()
-        sa = SuffixArray(ind)
-        ans, _, _ = sa.get_array(s)
-        ac.lst([x + 1 for x in ans])
-        return
+        SparseTable st(nums, [](long long a, long long b) { return std::min(a, b); });
+        // Function to compute LCP between two suffixes
+        auto lcp = [&](long long ii, long long jj) {
+            long long ri, rj;
+            ri = rk[ii];
+            rj = rk[jj];
+            if (ri > rj) {
+                swap(ri, rj);
+            }
+            if (ri == rj) {
+                return n - sa[ri];
+            }
+            return st.query(ri + 1, rj);
+        };
 
-    @staticmethod
-    def library_check_1(ac=FastIO()):
-        s = ac.read_str()
-        ind = {chr(ord("a")+i): i for i in range(26)}
-        sa, rk, height = SuffixArray(ind).get_array(s)
-        n = len(s)
-        ans = sum(height)
-        ac.st(n*(n+1)//2-ans)
-        return
 
-    @staticmethod
-    def ac_140(ac=FastIO()):
-        # 模板：后缀数组模板题
-        ind = {chr(ord("a") + i): i for i in range(26)}
-        sa, rk, height = SuffixArray(ind).get_array(ac.read_str())
-        ac.lst(sa)
-        ac.lst(height)
-        return
+        // Function to compare two suffixes
+        auto compare = [&](std::pair<long long, long long> a, std::pair<long long, long long> b) {
+            long long i1 = a.first;
+            long long j1 = a.second;
 
-    @staticmethod
-    def lc_1698(s: str) -> int:
-        # 模板：经典后缀数组应用题，利用 height 特性
-        ind = {chr(ord("a") + i): i for i in range(26)}
-        # 高度数组的定义，所有高度之和就是相同子串的个数
-        sa, rk, height = SuffixArray(ind).get_array(s)
-        n = len(s)
-        print(height)
-        return n*(n+1)//2 - sum(height)
+            long long i2 = b.first;
+            long long j2 = b.second;
+            long long x = lcp(i1, i2);
+            x = std::min(x, j1 - i1 + 1);
+            x = std::min(x, j2 - i2 + 1);
+            if (x == j1 - i1 + 1) {
+                if (x == j2 - i2 + 1) {
+                    return i1 < i2 ? -1 : 1;
+                }
+                return -1;
+            }
+
+
+            if (x == j2 - i2 + 1) {
+                return 1;
+            }
+            return s[i1 + x] < s[i2 + x] ? -1 : 1;
+        };
+        std::vector<long long> stack = {n};
+        for (long long i = n - 1; i >= 0; --i) {
+            while (stack.size() >= 2 &&
+                   compare({stack.back(), stack[stack.size() - 2] - 1}, {i, stack[stack.size() - 2] - 1}) == -1) {
+                stack.pop_back();
+            }
+            stack.push_back(i);
+        }
+        string ans;
+        long long right = n;
+        for (size_t i = 1; i < stack.size(); ++i) {
+            for (long long j = stack[i]; j < right; j++) {
+                ans += static_cast<char>('a' + s[j]);;
+            }
+            right = stack[i];
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}
