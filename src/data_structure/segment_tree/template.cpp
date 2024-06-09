@@ -8,6 +8,15 @@
 #include <algorithm>
 #include <iostream>
 using namespace std;
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+#include <vector>
+#include <stack>
+#include <tuple>
+
 
 class RangeAddRangeSumMinMax {
 private:
@@ -294,4 +303,168 @@ private:
             cover[i] = max(cover[i], val[i][k]);
         }
     }
+};
+
+
+class RangeAddMulRangeSum {
+public:
+    RangeAddMulRangeSum(long long n, long long mod) : n(n), mod(mod) {
+        cover.resize(4 * n);
+        cover1.resize(4 * n);
+        cover2.resize(4 * n);
+        add1.resize(4 * n);  // lazy_tag for mul
+        add2.resize(4 * n);  // lazy_tag for add
+    }
+
+    void _make_tag(long long i, long long s, long long t, long long val, long long op = 1) {
+        if (op == 2) {
+            cover[i] = (cover[i] + val * cover1[i] % mod) % mod;
+            cover2[i] = (cover2[i] + (t - s + 1) * val) % mod;
+            add2[i] += val;
+            add2[i] %= mod;
+        } else {
+            cover[i] = (cover[i] + val * cover2[i] % mod) % mod;
+            cover1[i] = (cover1[i] + (t - s + 1) * val) % mod;
+            add1[i] += val;
+            add1[i] %= mod;
+        }
+    }
+
+    void _push_up(long long i) {
+        cover[i] = (cover[i << 1] + cover[(i << 1) | 1]) % mod;
+        cover1[i] = (cover1[i << 1] + cover1[(i << 1) | 1]) % mod;
+        cover2[i] = (cover2[i << 1] + cover2[(i << 1) | 1]) % mod;
+    }
+
+    void _push_down(long long i, long long s, long long m, long long t) {
+        if (add1[i]) {
+            _make_tag(i << 1, s, m, add1[i], 1);
+            _make_tag((i << 1) | 1, m + 1, t, add1[i], 1);
+            add1[i] = 0;
+        }
+        if (add2[i]) {
+            _make_tag(i << 1, s, m, add2[i], 2);
+            _make_tag((i << 1) | 1, m + 1, t, add2[i], 2);
+            add2[i] = 0;
+        }
+    }
+
+    void build(const vector<pair<long long, long long>> &nums) {
+        stack<tuple<long long, long long, long long>> st;
+        st.push({0, n - 1, 1});
+        while (!st.empty()) {
+            long long s, t, i;
+            tie(s, t, i) = st.top();
+            st.pop();
+            if (i >= 0) {
+                if (s == t) {
+                    _make_tag(i, s, t, nums[s].first, 1);
+                    _make_tag(i, s, t, nums[s].second, 2);
+                } else {
+                    st.push({s, t, ~i});
+                    long long m = s + (t - s) / 2;
+                    st.push({s, m, i << 1});
+                    st.push({m + 1, t, (i << 1) | 1});
+                }
+            } else {
+                i = ~i;
+                _push_up(i);
+            }
+        }
+    }
+
+    vector<long long> get() {
+        vector<long long> nums(n);
+        stack<tuple<long long, long long, long long>> st;
+        st.push({0, n - 1, 1});
+        while (!st.empty()) {
+            long long s, t, i;
+            tie(s, t, i) = st.top();
+            st.pop();
+            if (s == t) {
+                nums[s] = cover[i] % mod;
+            } else {
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                st.push({s, m, i << 1});
+                st.push({m + 1, t, (i << 1) | 1});
+            }
+        }
+        return nums;
+    }
+
+    void range_add_mul(long long left, long long right, long long val, long long op = 1) {
+        stack<tuple<long long, long long, long long>> st;
+        st.push({0, n - 1, 1});
+        while (!st.empty()) {
+            long long s, t, i;
+            tie(s, t, i) = st.top();
+            st.pop();
+            if (i >= 0) {
+                if (left <= s && t <= right) {
+                    _make_tag(i, s, t, val, op);
+                    continue;
+                }
+                st.push({s, t, ~i});
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) st.push({s, m, i << 1});
+                if (right > m) st.push({m + 1, t, (i << 1) | 1});
+            } else {
+                i = ~i;
+                _push_up(i);
+            }
+        }
+    }
+
+    long long range_sum(long long left, long long right) {
+        if (left == right) {
+            long long s = 0, t = n - 1, i = 1;
+            long long ans = 0;
+            while (true) {
+                if (left <= s && t <= right) {
+                    ans += cover[i];
+                    ans %= mod;
+                    break;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    s = s;
+                    t = m;
+                    i = i << 1;
+                }
+                if (right > m) {
+                    s = m + 1;
+                    t = t;
+                    i = (i << 1) | 1;
+                }
+            }
+            return ans;
+        }
+
+        stack<tuple<long long, long long, long long>> st;
+        st.push({0, n - 1, 1});
+        long long ans = 0;
+        while (!st.empty()) {
+            long long s, t, i;
+            tie(s, t, i) = st.top();
+            st.pop();
+            if (left <= s && t <= right) {
+                ans += cover[i];
+                ans %= mod;
+                continue;
+            }
+            long long m = s + (t - s) / 2;
+            _push_down(i, s, m, t);
+            if (left <= m) st.push({s, m, i << 1});
+            if (right > m) st.push({m + 1, t, (i << 1) | 1});
+        }
+        return ans;
+    }
+
+private:
+    long long n, mod;
+    vector<long long> cover, cover1, cover2, add1, add2;
+    // https://atcoder.jp/contests/abc357/tasks/abc357_f
 };
