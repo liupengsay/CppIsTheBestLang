@@ -1,157 +1,51 @@
-from functools import lru_cache
+#include <iostream>
+#include <vector>
+#include <string>
+#include <functional>
+#include <map>
 
+using namespace std;
 
-class DigitalDP:
-    def __init__(self):
-        return
+int main() {
+    // https://atcoder.jp/contests/abc208/tasks/abc208_e
+    long long n, k;
+    cin >> n >> k;
 
-    @staticmethod
-    def count_bin(n):
-        # calculate the number of occurrences of positive long longeger binary bit 1 from 1 to n
+    string st = to_string(n);
+    long long m = st.size();
 
-        @lru_cache(None)
-        def dfs(i, is_limit, is_num, cnt):
-            if i == m:
-                if is_num:
-                    return cnt
-                return 0
-            res = 0
-            if not is_num:
-                res += dfs(i + 1, False, False, cnt)
-            low = 0 if is_num else 1
-            high = long long(st[i]) if is_limit else 1
-            for x in range(low, high + 1):
-                res += dfs(i + 1, is_limit and high == x, True, cnt + long long(i == w) * x)
-            return res
+    // Memoization for dfs
+    map<tuple<long long, bool, bool, long long>, long long> memo;
 
-        st = bin(n)[2:]
-        m = len(st)
-        ans = []  # From binary high to binary low
-        for w in range(m):
-            cur = dfs(0, True, False, 0)
-            ans.append(cur)
-            dfs.cache_clear()
-        return ans
+    function<long long(long long, bool, bool, long long)> dfs = [&](long long i, bool is_limit, bool is_num,
+                                                                    long long pre) {
+        if (i == m) {
+            return is_num && pre <= k ? 1LL : 0LL;
+        }
+        if (memo.find(make_tuple(i, is_limit, is_num, pre)) != memo.end()) {
+            return memo[make_tuple(i, is_limit, is_num, pre)];
+        }
 
-    @staticmethod
-    def count_digit(num, d):
-        # Calculate the number of occurrences of digit d within 1 to num
+        long long res = 0;
+        if (!is_num) {
+            res += dfs(i + 1, false, false, 0);
+        }
+        long long low = is_num ? 0 : 1;
+        long long high = is_limit ? st[i] - '0' : 9;
 
-        @lru_cache(None)
-        def dfs(i, cnt, is_limit, is_num):
-            if i == n:
-                if is_num:
-                    return cnt
-                return 0
-            res = 0
-            if not is_num:
-                res += dfs(i + 1, 0, False, False)
+        for (long long x = low; x <= high; ++x) {
+            long long y = is_num ? pre * x : x;
+            if (y > k) {
+                y = k + 1;
+            }
+            res += dfs(i + 1, is_limit && (high == x), true, y);
+        }
+        memo[make_tuple(i, is_limit, is_num, pre)] = res;
+        return res;
+    };
 
-            floor = 0 if is_num else 1
-            ceil = long long(s[i]) if is_limit else 9
-            for x in range(floor, ceil + 1):
-                res += dfs(i + 1, cnt + long long(x == d), is_limit and ceil == x, True)
-            return res
+    long long ans = dfs(0, true, false, 0);
+    cout << ans << endl;
 
-        s = str(num)
-        n = len(s)
-        return dfs(0, 0, True, False)
-
-    @staticmethod
-    def count_digit_iteration(num, d):
-        # Calculate the number of occurrences of digit d within 1 to num by iteration
-        assert num >= 1
-        s = str(num)
-        n = len(s)
-        dp = [[[[0] * 2 for _ in range(2)] for _ in range(n + 2)] for _ in range(n + 1)]
-        # 数位 计数 是否受限 是否为数字
-        for i in range(n, -1, -1):
-            for cnt in range(n, -1, -1):
-                for is_limit in range(1, -1, -1):
-                    for is_num in range(1, -1, -1):
-                        if i == n:
-                            dp[i][cnt][is_limit][is_num] = cnt if is_num else 0
-                            continue
-                        res = 0
-                        if not is_num:
-                            res += dp[i + 1][0][0][0]
-                        floor = 0 if is_num else 1
-                        ceil = long long(s[i]) if is_limit else 9
-                        for x in range(floor, ceil + 1):
-                            res += dp[i + 1][cnt + long long(x == d)][long long(is_limit and x == ceil)][1]
-                        dp[i][cnt][is_limit][is_num] = res
-        return dp[0][0][1][0]
-
-    @staticmethod
-    def count_num_base(num, d):
-        # Use decimal to calculate the number of digits from 1 to num without the digit d
-        assert 1 <= d <= 9  # If 0 is not included, use digital DP for calculation
-        s = str(num)
-        i = s.find(str(d))
-        if i != -1:
-            if d:
-                s = s[:i] + str(d - 1) + (len(s) - i - 1) * "9"
-            else:
-                s = s[:i - 1] + str(long long(s[i - 1]) - 1) + (len(s) - i - 1) * "9"
-            num = long long(s)
-
-        lst = []
-        while num:
-            lst.append(num % 10)
-            if d and lst[-1] >= d:
-                lst[-1] -= 1
-            elif not d and lst[-1] == 0:
-                num *= 10
-                num -= 1
-                lst.append(num % 10)
-            num //= 10
-        lst.reverse()
-
-        ans = 0
-        for x in lst:
-            ans *= 9
-            ans += x
-        return ans
-
-    @staticmethod
-    def count_num_dp(num, d):
-
-        # Use decimal to calculate the number of digits from 1 to num without the digit d
-        assert 0 <= d <= 9
-
-        @lru_cache(None)
-        def dfs(i: long long, is_limit: bool, is_num: bool) -> long long:
-            if i == m:
-                return long long(is_num)
-
-            res = 0
-            if not is_num:
-                res = dfs(i + 1, False, False)
-            up = long long(s[i]) if is_limit else 9
-            for x in range(0 if is_num else 1, up + 1):
-                if x != d:
-                    res += dfs(i + 1, is_limit and x == up, True)
-            return res
-
-        s = str(num)
-        m = len(s)
-        return dfs(0, True, False)
-
-    @staticmethod
-    def get_kth_without_d(k, d):
-        # Use decimal to calculate the k-th digit without digit d 0<=d<=9
-        assert 0 <= d <= 9
-        lst = []
-        st = list(range(10))
-        st.remove(d)
-        while k:
-            if d:
-                lst.append(k % 9)
-                k //= 9
-            else:
-                lst.append((k - 1) % 9)
-                k = (k - 1) // 9
-        lst.reverse()
-        # It can also be solved using binary search and digit DP
-        ans = [str(st[i]) for i in lst]
-        return long long("".join(ans))
+    return 0;
+}
