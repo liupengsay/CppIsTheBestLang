@@ -468,3 +468,119 @@ private:
     vector<long long> cover, cover1, cover2, add1, add2;
     // https://atcoder.jp/contests/abc357/tasks/abc357_f
 };
+
+using namespace std;
+// 快速幂取模函数，用于计算 base^exp % mod
+long long pow(long long base, long long exp, long long mod) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+class RangeMulRangeMul {
+private:
+    long long n;
+    vector<long long> cover, lazy_tag;
+    const long long MOD;
+
+    void push_down(long long i, long long s, long long m, long long t) {
+        if (lazy_tag[i] != 1) {
+            cover[i << 1] = (cover[i << 1] * pow(lazy_tag[i], m - s + 1, MOD)) % MOD;
+            cover[(i << 1) | 1] = (cover[(i << 1) | 1] * pow(lazy_tag[i], t - m, MOD)) % MOD;
+            lazy_tag[i << 1] = (lazy_tag[i << 1] * lazy_tag[i]) % MOD;
+            lazy_tag[(i << 1) | 1] = (lazy_tag[(i << 1) | 1] * lazy_tag[i]) % MOD;
+            lazy_tag[i] = 1;
+        }
+    }
+
+    void push_up(long long i) {
+        cover[i] = (cover[i << 1] * cover[(i << 1) | 1]) % MOD;
+    }
+
+    void make_tag(long long i, long long s, long long t, long long val) {
+        cover[i] = (cover[i] * pow(val, (t - s + 1), MOD)) % MOD;
+        lazy_tag[i] = (lazy_tag[i] * val) % MOD;
+    }
+
+public:
+    RangeMulRangeMul(long long n, long long mod = 1000000007)
+            : n(n), cover(4 * n, 1), lazy_tag(4 * n, 1), MOD(mod) {}
+
+    void build(const vector<long long>& nums) {
+        stack<tuple<long long, long long, long long>> stk;
+        stk.emplace(0, n - 1, 1);
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (i >= 0) {
+                if (s == t) {
+                    make_tag(i, s, t, nums[s]);
+                } else {
+                    stk.emplace(s, t, ~i);
+                    long long m = s + (t - s) / 2;
+                    stk.emplace(s, m, i << 1);
+                    stk.emplace(m + 1, t, (i << 1) | 1);
+                }
+            } else {
+                i = ~i;
+                push_up(i);
+            }
+        }
+    }
+
+    void range_mul_update(long long left, long long right, long long val) {
+        stack<tuple<long long, long long, long long>> stk;
+        stk.emplace(0, n - 1, 1);
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (i >= 0) {
+                if (left <= s && t <= right) {
+                    make_tag(i, s, t, val);
+                    continue;
+                }
+                long long m = s + (t - s) / 2;
+                push_down(i, s, m, t);
+                stk.emplace(s, t, ~i);
+                if (left <= m) {
+                    stk.emplace(s, m, i << 1);
+                }
+                if (right > m) {
+                    stk.emplace(m + 1, t, (i << 1) | 1);
+                }
+            } else {
+                i = ~i;
+                push_up(i);
+            }
+        }
+    }
+
+    long long range_mul_query(long long left, long long right) {
+        stack<tuple<long long, long long, long long>> stk;
+        stk.emplace(0, n - 1, 1);
+        long long ans = 1;
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (left <= s && t <= right) {
+                ans = (ans * cover[i]) % MOD;
+                continue;
+            }
+            long long m = s + (t - s) / 2;
+            push_down(i, s, m, t);
+            if (left <= m) {
+                stk.emplace(s, m, i << 1);
+            }
+            if (right > m) {
+                stk.emplace(m + 1, t, (i << 1) | 1);
+            }
+        }
+        return ans;
+    }
+};
