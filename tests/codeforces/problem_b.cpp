@@ -2,160 +2,160 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#define int128 __int128_t
-#define int64 __int64_t
-#define ac FastIO
+#include <numeric>
+#include <cassert>
+#include <unordered_map>
 
+using namespace std;
 
-class FastIO {
+class UnionFind {
 public:
-    static long long read_int() {
-        long long num;
-        std::cin >> num;
-        return num;
-    }
+    vector<int> root;
+    vector<int> size;
+    int part;
 
-    static float read_float() {
-        float num;
-        std::cin >> num;
-        return num;
-    }
-
-    static std::vector<long long> read_list_ints() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
+    UnionFind(int n) {
+        root.resize(n);
+        size.resize(n, 0);
+        part = n;
+        for (int i = 0; i < n; ++i) {
+            root[i] = i;
         }
-        return nums;
     }
 
-    static std::vector<long long> read_list_ints_minus_one() {
-        long long n;
-        std::cin >> n;
-        std::vector<long long> nums(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> nums[i];
-            nums[i] -= 1;
+    int find(int x) {
+        int y = x;
+        while (x != root[x]) {
+            x = root[x];
         }
-        return nums;
-    }
-
-    static std::string read_str() {
-        std::string str;
-        std::cin >> str;
-        return str;
-    }
-
-    static std::vector<std::string> read_list_strs() {
-        long long n;
-        std::cin >> n;
-        std::vector<std::string> strs(n);
-        for (long long i = 0; i < n; i++) {
-            std::cin >> strs[i];
+        while (y != x) {
+            int temp = root[y];
+            root[y] = x;
+            y = temp;
         }
-        return strs;
+        return x;
     }
 
-    static void st(long long x) {
-        std::cout << x << std::endl;
-    }
-
-    static void lst(const std::vector<long long> &x) {
-        for (long long num: x) {
-            std::cout << num << " ";
+    bool union_sets(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) return false;
+        if (size[rootX] >= size[rootY]) {
+            swap(rootX, rootY);
         }
-        std::cout << std::endl;
+        root[rootX] = rootY;
+        size[rootY] += size[rootX];
+        size[rootX] = 0;
+        part--;
+        return true;
     }
 
-    static long long max(long long a, long long b) {
-        return (a > b) ? a : b;
-    }
-
-    static long long min(long long a, long long b) {
-        return (a < b) ? a : b;
-    }
-
-    static long long ceil(long long a, long long b) {
-        return a / b + (a % b != 0);
-    }
-
-    static long long floor(long long a, long long b) {
-        if (a > 0) {
-            return a / b;
+    unordered_map<int, vector<int>> get_root_part() {
+        unordered_map<int, vector<int>> part_map;
+        int n = root.size();
+        for (int i = 0; i < n; ++i) {
+            part_map[find(i)].push_back(i);
         }
-        long long res = a / b;
-        if (a % b) {
-            res--;
-        }
-        return res;
+        return part_map;
     }
 };
 
-
-
-class Solution {
-public:
-    static void main() {
-
-        auto check = [&](const std::vector<std::pair<long long, long long>> &lst) {
-            if (lst.empty()) {
-                return 0LL;
-            }
-            long long x = lst[0].first;
-            long long y = lst[0].second;
-            long long w = (x - y) % 2;
-            std::vector<long long> cur;
-            for (const auto &pair: lst) {
-                cur.push_back(ac::floor(pair.first - pair.second + w, 2));
-            }
-            std::sort(cur.begin(), cur.end());
-            long long res = 0;
-            long long pre = 0;
-            for (long long i = 0; i < cur.size(); ++i) {
-                pre += cur[i];
-                res += (i + 1) * cur[i] - pre;
-            }
-            cur.clear();
-            for (const auto &pair: lst) {
-                cur.push_back((pair.first + pair.second + w) / 2);
-            }
-            std::sort(cur.begin(), cur.end());
-            pre = 0;
-            for (long long i = 0; i < cur.size(); ++i) {
-                pre += cur[i];
-                res += (i + 1) * cur[i] - pre;
-            }
-            return res;
-        };
-
-        long long n = ac::read_int();
-        std::vector<std::pair<long long, long long>> nums(n);
-        for (long long i = 0; i < n; ++i) {
-            std::cin >> nums[i].first >> nums[i].second;
-        }
-
-        long long ans = 0;
-        for (long long w = 0; w < 2; w++) {
-            std::vector<std::pair<long long, long long>> filtered_nums;
-            for (const auto &pair: nums) {
-                long long x = pair.first;
-                long long y = pair.second;
-                if ((x + y) % 2 == w) {
-                    filtered_nums.emplace_back(x, y);
-                }
-            }
-            ans += check(filtered_nums);
-        }
-
-        ac::st(ans);
-
+vector<vector<int>> get_diff_matrix3(int m, int n, const vector<tuple<int, int, int, int, int>>& shifts) {
+    vector<int> diff((m + 1) * (n + 1), 0);
+    for (const auto& shift : shifts) {
+        int xa, xb, ya, yb, d;
+        tie(xa, xb, ya, yb, d) = shift;
+        assert(0 <= xa && xa <= xb && xb <= m - 1);
+        assert(0 <= ya && ya <= yb && yb <= n - 1);
+        diff[xa * (n + 1) + ya] += d;
+        diff[xa * (n + 1) + yb + 1] -= d;
+        diff[(xb + 1) * (n + 1) + ya] -= d;
+        diff[(xb + 1) * (n + 1) + yb + 1] += d;
     }
-};
 
+    vector<int> res((m + 1) * (n + 1), 0);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            res[(i + 1) * (n + 1) + j + 1] = res[(i + 1) * (n + 1) + j] + res[i * (n + 1) + j + 1]
+                                             - res[i * (n + 1) + j] + diff[i * (n + 1) + j];
+        }
+    }
+
+    vector<vector<int>> result(m, vector<int>(n, 0));
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            result[i][j] = res[(i + 1) * (n + 1) + j + 1];
+        }
+    }
+    return result;
+}
 
 int main() {
-    Solution::main();
+    int t;
+    cin >> t;
+    while (t--) {
+        int m, n;
+        cin >> m >> n;
+        vector<string> grid(m);
+        for (int i = 0; i < m; ++i) {
+            cin >> grid[i];
+        }
+
+        UnionFind uf(m * n);
+        vector<int> row(m, 0), col(n, 0);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == '#') {
+                    uf.size[i * n + j] = 1;
+                } else {
+                    row[i]++;
+                    col[j]++;
+                }
+            }
+        }
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == '#') {
+                    if (i + 1 < m && grid[i + 1][j] == '#') {
+                        uf.union_sets(i * n + j, (i + 1) * n + j);
+                    }
+                    if (j + 1 < n && grid[i][j + 1] == '#') {
+                        uf.union_sets(i * n + j, i * n + j + 1);
+                    }
+                }
+            }
+        }
+
+        auto group = uf.get_root_part();
+        vector<tuple<int, int, int, int, int>> lst;
+
+        for (const auto& g : group) {
+            if (uf.size[g.first] > 0) {
+                int x1 = max(*min_element(g.second.begin(), g.second.end(), [n](int a, int b) { return a / n < b / n; }) / n - 1, 0);
+                int x2 = min(*max_element(g.second.begin(), g.second.end(), [n](int a, int b) { return a / n < b / n; }) / n + 1, m - 1);
+                int y1 = max(*min_element(g.second.begin(), g.second.end(), [n](int a, int b) { return a % n < b % n; }) % n - 1, 0);
+                int y2 = min(*max_element(g.second.begin(), g.second.end(), [n](int a, int b) { return a % n < b % n; }) % n + 1, n - 1);
+                lst.emplace_back(x1, x2, y1, y2, -uf.size[g.first]);
+                lst.emplace_back(x1, x2, 0, n - 1, uf.size[g.first]);
+                lst.emplace_back(0, m - 1, y1, y2, uf.size[g.first]);
+            }
+        }
+
+        auto res = get_diff_matrix3(m, n, lst);
+        vector<int> lst_flat;
+        for (const auto& row : res) {
+            lst_flat.insert(lst_flat.end(), row.begin(), row.end());
+        }
+
+        int ans = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                ans = max(ans, row[i] + col[j] - (grid[i][j] == '.') + lst_flat[i * n + j]);
+            }
+        }
+
+        cout << ans << endl;
+    }
     return 0;
 }
