@@ -584,3 +584,98 @@ public:
         return ans;
     }
 };
+class RangeSetPointGet {
+public:
+    int n;
+    int initial;
+    std::vector<int> lazy_tag;
+
+    RangeSetPointGet(int n, int initial = -1) : n(n), initial(initial), lazy_tag(4 * n, initial) {}
+
+    void build(const std::vector<int>& nums) {
+        std::stack<std::tuple<int, int, int>> stk;
+        stk.emplace(0, n - 1, 1);
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (s == t) {
+                _make_tag(i, nums[s]);
+            } else {
+                int m = s + (t - s) / 2;
+                stk.emplace(s, m, i << 1);
+                stk.emplace(m + 1, t, (i << 1) | 1);
+            }
+        }
+    }
+
+    void range_set(int left, int right, int val) {
+        std::stack<std::tuple<int, int, int>> stk;
+        stk.emplace(0, n - 1, 1);
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (left <= s && t <= right) {
+                _make_tag(i, val);
+                continue;
+            }
+            int m = s + (t - s) / 2;
+            _push_down(i);
+            if (left <= m) {
+                stk.emplace(s, m, i << 1);
+            }
+            if (right > m) {
+                stk.emplace(m + 1, t, (i << 1) | 1);
+            }
+        }
+    }
+
+    int point_get(int ind) {
+        int s = 0, t = n - 1, i = 1;
+        while (true) {
+            if (s == t && s == ind) {
+                return lazy_tag[i];
+            }
+            int m = s + (t - s) / 2;
+            _push_down(i);
+            if (ind <= m) {
+                t = m;
+                i = i << 1;
+            } else {
+                s = m + 1;
+                i = (i << 1) | 1;
+            }
+        }
+    }
+
+    std::vector<int> get() {
+        std::stack<std::tuple<int, int, int>> stk;
+        std::vector<int> nums(n);
+        stk.emplace(0, n - 1, 1);
+        while (!stk.empty()) {
+            auto [s, t, i] = stk.top();
+            stk.pop();
+            if (s == t) {
+                nums[s] = lazy_tag[i];
+                continue;
+            }
+            int m = s + (t - s) / 2;
+            _push_down(i);
+            stk.emplace(s, m, i << 1);
+            stk.emplace(m + 1, t, (i << 1) | 1);
+        }
+        return nums;
+    }
+
+private:
+    void _push_down(int i) {
+        if (lazy_tag[i] != initial) {
+            lazy_tag[i << 1] = lazy_tag[i];
+            lazy_tag[(i << 1) | 1] = lazy_tag[i];
+            lazy_tag[i] = initial;
+        }
+    }
+
+    void _make_tag(int i, int val) {
+        lazy_tag[i] = val;
+    }
+};

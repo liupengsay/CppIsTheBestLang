@@ -281,3 +281,184 @@ int main() {
     return 0;
 }
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <bitset>
+
+using namespace std;
+
+const long long MAXN = 100005;
+const long long INF = LLONG_MAX;
+class RangeSetRangeOr {
+public:
+    RangeSetRangeOr(long long n) : n(n), lazy_tag(4 * n, INF), cover(4 * n, 0) {}
+
+    void build(const vector<long long>& nums) {
+        build(1, 0, n - 1, nums);
+    }
+
+    vector<long long> get() {
+        vector<long long> nums(n);
+        get(1, 0, n - 1, nums);
+        return nums;
+    }
+
+    void range_set(long long left, long long right, long long val) {
+        range_set(1, 0, n - 1, left, right, val);
+    }
+
+    long long range_or(long long left, long long right) {
+        return range_or(1, 0, n - 1, left, right);
+    }
+
+private:
+    long long n;
+    vector<long long> lazy_tag;
+    vector<long long> cover;
+
+    void make_tag(long long val, long long i) {
+        cover[i] = val;
+        lazy_tag[i] = val;
+    }
+
+    void push_down(long long i) {
+        if (lazy_tag[i] != INF) {
+            make_tag(lazy_tag[i], i * 2);
+            make_tag(lazy_tag[i], i * 2 + 1);
+            lazy_tag[i] = INF;
+        }
+    }
+
+    void push_up(long long i) {
+        cover[i] = cover[i * 2] | cover[i * 2 + 1];
+    }
+
+    void build(long long i, long long s, long long t, const vector<long long>& nums) {
+        if (s == t) {
+            make_tag(nums[s], i);
+        } else {
+            long long m = (s + t) / 2;
+            build(i * 2, s, m, nums);
+            build(i * 2 + 1, m + 1, t, nums);
+            push_up(i);
+        }
+    }
+
+    void get(long long i, long long s, long long t, vector<long long>& nums) {
+        if (s == t) {
+            nums[s] = cover[i];
+        } else {
+            long long m = (s + t) / 2;
+            push_down(i);
+            get(i * 2, s, m, nums);
+            get(i * 2 + 1, m + 1, t, nums);
+        }
+    }
+
+    void range_set(long long i, long long s, long long t, long long left, long long right, long long val) {
+        if (left <= s && t <= right) {
+            make_tag(val, i);
+        } else {
+            long long m = (s + t) / 2;
+            push_down(i);
+            if (left <= m) range_set(i * 2, s, m, left, right, val);
+            if (right > m) range_set(i * 2 + 1, m + 1, t, left, right, val);
+            push_up(i);
+        }
+    }
+
+    long long range_or(long long i, long long s, long long t, long long left, long long right) {
+        if (left <= s && t <= right) {
+            return cover[i];
+        } else {
+            long long m = (s + t) / 2;
+            push_down(i);
+            long long res = 0;
+            if (left <= m) res |= range_or(i * 2, s, m, left, right);
+            if (right > m) res |= range_or(i * 2 + 1, m + 1, t, left, right);
+            return res;
+        }
+    }
+};
+struct DFS {
+    vector<long long> start, end, order;
+    long long timer;
+
+    void dfs(long long v, const vector<vector<long long>> &adj, vector<bool> &visited) {
+        visited[v] = true;
+        start[v] = timer++;
+        order.push_back(v);
+        for (long long u: adj[v]) {
+            if (!visited[u]) {
+                dfs(u, adj, visited);
+            }
+        }
+        end[v] = timer - 1;
+    }
+
+    void gen_bfs_order_iteration(const vector<vector<long long>> &adj, long long root) {
+        long long n = adj.size();
+        start.resize(n);
+        end.resize(n);
+        order.clear();
+        timer = 0;
+        vector<bool> visited(n, false);
+        dfs(root, adj, visited);
+    }
+};
+
+int mai2n() {
+    // https://codeforces.com/problemset/problem/620/E
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    long long n, q;
+    cin >> n >> q;
+    vector<long long> c(n);
+    for (long long i = 0; i < n; ++i) {
+        cin >> c[i];
+    }
+
+    vector<vector<long long>> dct(n);
+    for (long long i = 0; i < n - 1; ++i) {
+        long long u, v;
+        cin >> u >> v;
+        --u;
+        --v;
+        dct[u].push_back(v);
+        dct[v].push_back(u);
+    }
+
+    DFS dfs;
+    dfs.gen_bfs_order_iteration(dct, 0);
+    vector<long long> dfn(n);
+    for (long long i = 0; i < n; ++i) {
+        dfn[dfs.start[i]] = i;
+    }
+
+    RangeSetRangeOr tree(n);
+    vector<long long> init_values(n);
+    for (long long i = 0; i < n; ++i) {
+        init_values[i] = 1LL << c[dfn[i]];
+    }
+    tree.build(init_values);
+
+    for (long long i = 0; i < q; ++i) {
+        long long t;
+        cin >> t;
+        if (t == 1) {
+            long long v, new_c;
+            cin >> v >> new_c;
+            --v;
+            tree.range_set(dfs.start[v], dfs.end[v], 1LL << new_c);
+        } else {
+            long long v;
+            cin >> v;
+            --v;
+            long long ans = tree.range_or(dfs.start[v], dfs.end[v]);
+            cout << bitset<64>(ans).count() << endl;
+        }
+    }
+
+    return 0;
+}
