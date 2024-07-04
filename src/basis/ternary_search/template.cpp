@@ -1,169 +1,89 @@
-import math
-from decimal import Decimal
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
+#include <functional>
 
+class FastIO {
+public:
+    long long read_int() {
+        long long x;
+        std::cin >> x;
+        return x;
+    }
 
-class TernarySearch:
-    def __init__(self):
-        return
+    std::vector<long long> read_list_ints(long long n) {
+        std::vector<long long> v(n);
+        for (long long i = 0; i < n; ++i) {
+            std::cin >> v[i];
+        }
+        return v;
+    }
 
-    @staticmethod
-    def find_ceil_point_float(fun, left, right, error=1e-9, high_precision=False):
-        """the float point at which the upper convex function obtains its maximum value"""
-        while left < right - error:
-            diff = Decimal(right - left) / 3 if high_precision else (right - left) / 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 > dist2:
-                right = mid2
-            elif dist1 < dist2:
-                left = mid1
-            else:
-                left = mid1
-                right = mid2
-        return left
+    void st(long long ans) {
+        std::cout << ans << "\n";
+    }
+};
 
-    @staticmethod
-    def find_ceil_point_int(fun, left, right, error=1):
-        """the int point at which the upper convex function obtains its maximum value"""
-        while left < right - error:
-            diff = (right - left) // 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 > dist2:
-                right = mid2
-            elif dist1 < dist2:
-                left = mid1
-            else:
-                left = mid1
-                right = mid2
-        return left
+class TernarySearch {
+public:
+    static long long find_floor_point_int(const auto& fun, long long left, long long right, long long error = 1) {
+        while (left < right - error) {
+            long long diff = (right - left) / 3;
+            long long mid1 = left + diff;
+            long long mid2 = left + 2 * diff;
+            long long dist1 = fun(mid1);
+            long long dist2 = fun(mid2);
+            if (dist1 < dist2) {
+                right = mid2;
+            } else if (dist1 > dist2) {
+                left = mid1;
+            } else {
+                left = mid1;
+                right = mid2;
+            }
+        }
+        return left;
+    }
+};
 
-    @staticmethod
-    def find_floor_point_float(fun, left, right, error=1e-9, high_precision=False):
-        """The float point when solving the convex function to obtain the minimum value"""
-        while left < right - error:
-            diff = Decimal(right - left) / 3 if high_precision else (right - left) / 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 < dist2:
-                right = mid2
-            elif dist1 > dist2:
-                left = mid1
-            else:
-                left = mid1
-                right = mid2
-        return left
+class Solution {
+public:
+    void main() {
+        FastIO ac;
+        long long n = ac.read_int();
+        long long a = ac.read_int();
+        long long r = ac.read_int();
+        long long m = ac.read_int();
+        std::vector<long long> h = ac.read_list_ints(n);
 
-    @staticmethod
-    def find_floor_point_int(fun, left, right, error=1):
-        """The int point when solving the convex function to obtain the minimum value"""
-        while left < right - error:
-            diff = Decimal(right - left) // 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 < dist2:
-                right = mid2
-            elif dist1 > dist2:
-                left = mid1
-            else:
-                left = mid1
-                right = mid2
-        return left
+        std::sort(h.begin(), h.end());
+        std::vector<long long> pre(n + 1, 0);
+        std::partial_sum(h.begin(), h.end(), pre.begin() + 1);
 
-    @staticmethod
-    def find_ceil_value_float(fun, left, right, error=1e-9, high_precision=False):
-        f1, f2 = fun(left), fun(right)
-        while abs(f1 - f2) > error:
-            diff = Decimal(right - left) / 3 if high_precision else (right - left) / 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 > dist2:
-                right = mid2
-                f2 = dist2
-            elif dist1 < dist2:
-                left = mid1
-                f1 = dist1
-            else:
-                left = mid1
-                right = mid2
-                f1, f2 = dist1, dist2
-        return (f1 + f2) / 2
+        auto check = [&](long long x) -> long long {
+            long long i = std::lower_bound(h.begin(), h.end(), x) - h.begin();
+            long long low = (long long)x * i - pre[i];
+            long long high = pre[n] - pre[i] - (long long)(n - i) * x;
+            long long y = std::min(low, high);
+            long long res = y * std::min(m, a + r);
+            res += (low - y) * a + (high - y) * r;
+            return res;
+        };
 
-    @staticmethod
-    def find_floor_value_float(fun, left, right, error=1e-9, high_precision=False):
-        f1, f2 = fun(left), fun(right)
-        while abs(f1 - f2) > error:
-            diff = Decimal(right - left) / 3 if high_precision else (right - left) / 3
-            mid1 = left + diff
-            mid2 = left + 2 * diff
-            dist1 = fun(mid1)
-            dist2 = fun(mid2)
-            if dist1 < dist2:
-                right = mid2
-                f2 = dist2
-            elif dist1 > dist2:
-                left = mid1
-                f1 = dist1
-            else:
-                left = mid1
-                right = mid2
-                f1, f2 = dist1, dist2
-        return (f1 + f2) / 2
+        long long mid = TernarySearch::find_floor_point_int(check, 0, *std::max_element(h.begin(), h.end()));
+        long long ans = LLONG_MAX;
+        for (long long x = mid - 5; x <= mid + 5; ++x) {
+            if (x >= 0) {
+                ans = std::min(ans, check(x));
+            }
+        }
+        ac.st(ans);
+    }
+};
 
-
-class TriPartPackTriPart:
-    def __init__(self):
-        return
-
-    @staticmethod
-    def find_floor_point_float(target, left_x, right_x, low_y, high_y):
-        # Find the smallest coordinate [x, y] to minimize the target of the objective function
-        error = 5e-8
-        
-        def optimize(y):
-            # The loss function
-            low_ = left_x
-            high_ = right_x
-            while low_ < high_ - error:
-                diff_ = (high_ - low_) / 3
-                mid1_ = low_ + diff_
-                mid2_ = low_ + 2 * diff_
-                dist1_ = target(mid1_, y)
-                dist2_ = target(mid2_, y)
-                if dist1_ < dist2_:
-                    high_ = mid2_
-                elif dist1_ > dist2_:
-                    low_ = mid1_
-                else:
-                    low_ = mid1_
-                    high_ = mid2_
-            return low_, target(low_, y)
-
-        low = low_y
-        high = high_y
-        while low < high - error:
-            diff = (high - low) / 3
-            mid1 = low + diff
-            mid2 = low + 2 * diff
-            _, dist1 = optimize(mid1)
-            _, dist2 = optimize(mid2)
-            if dist1 < dist2:
-                high = mid2
-            elif dist1 > dist2:
-                low = mid1
-            else:
-                low = mid1
-                high = mid2
-        res_x, r = optimize(low)
-        res_y = low
-        return [res_x, res_y, math.sqrt(r)]
+int main() {
+    Solution().main();
+    return 0;
+}
