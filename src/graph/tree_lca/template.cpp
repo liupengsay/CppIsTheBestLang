@@ -8,14 +8,15 @@
 #include <stack>
 #include <cassert>
 
-using namespace std;#include <iostream>
+using namespace std;
+#include <iostream>
 #include <vector>
 #include <tuple>
 #include <stack>
 #include <cassert>
 
 using namespace std;
-using namespace std;
+
 
 class TreeAncestor {
 public:
@@ -99,26 +100,27 @@ private:
     vector<vector<int>> dp;
 };
 
+
 class HeavyChain {
 public:
-    int n;
-    vector<vector<int>> dct;
-    vector<int> parent, cnt_son, weight_son, top, dfn, rev_dfn, depth;
+    long long n;
+    vector<vector<long long>> dct;
+    vector<long long> parent, cnt_son, weight_son, top, dfn, rev_dfn, depth;
 
-    HeavyChain(const vector<vector<int>>& dct, int root = 0) : n(dct.size()), dct(dct), parent(n, -1), cnt_son(n, 1), weight_son(n, -1), top(n, -1), dfn(n, 0), rev_dfn(n, 0), depth(n, 0) {
+    HeavyChain(const vector<vector<long long>>& dct, long long root = 0) : n(dct.size()), dct(dct), parent(n, -1), cnt_son(n, 1), weight_son(n, -1), top(n, -1), dfn(n, 0), rev_dfn(n, 0), depth(n, 0) {
         build_weight(root);
         build_dfs(root);
     }
 
-    void build_weight(int root) {
-        stack<int> stk;
+    void build_weight(long long root) {
+        stack<long long> stk;
         stk.push(root);
         while (!stk.empty()) {
-            int i = stk.top();
+            long long i = stk.top();
             stk.pop();
             if (i >= 0) {
                 stk.push(-i-1);
-                for (int j : dct[i]) {
+                for (long long j : dct[i]) {
                     if (j != parent[i]) {
                         stk.push(j);
                         parent[j] = i;
@@ -127,7 +129,7 @@ public:
                 }
             } else {
                 i = -i-1;
-                for (int j : dct[i]) {
+                for (long long j : dct[i]) {
                     if (j != parent[i]) {
                         cnt_son[i] += cnt_son[j];
                         if (weight_son[i] == -1 || cnt_son[j] > cnt_son[weight_son[i]]) {
@@ -139,10 +141,10 @@ public:
         }
     }
 
-    void build_dfs(int root) {
-        stack<pair<int, int>> stk;
+    void build_dfs(long long root) {
+        stack<pair<long long, long long>> stk;
         stk.emplace(root, root);
-        int order = 0;
+        long long order = 0;
         while (!stk.empty()) {
             auto [i, tp] = stk.top();
             stk.pop();
@@ -150,8 +152,8 @@ public:
             rev_dfn[order] = i;
             top[i] = tp;
             order++;
-            int w = weight_son[i];
-            for (int j : dct[i]) {
+            long long w = weight_son[i];
+            for (long long j : dct[i]) {
                 if (j != parent[i] && j != w) {
                     stk.emplace(j, j);
                 }
@@ -162,23 +164,24 @@ public:
         }
     }
 
-    vector<pair<int, int>> query_chain(int x, int y) {
-        vector<pair<int, int>> lst;
+    vector<pair<long long, long long>> query_chain(long long x, long long y) {
+        std::vector<std::pair<long long, long long>> pre, post;
         while (top[x] != top[y]) {
-            if (depth[top[x]] < depth[top[y]]) {
-                swap(x, y);
+            if (depth[top[x]] > depth[top[y]]) {
+                pre.emplace_back(dfn[x], dfn[top[x]]);
+                x = parent[top[x]];
+            } else {
+                post.emplace_back(dfn[top[y]], dfn[y]);
+                y = parent[top[y]];
             }
-            assert(dfn[top[x]] <= dfn[x]);
-            lst.emplace_back(dfn[top[x]], dfn[x]);
-            x = parent[top[x]];
         }
-        int a = dfn[x], b = dfn[y];
-        if (a > b) swap(a, b);
-        lst.emplace_back(a, b);
-        return lst;
+        long long a = dfn[x], b = dfn[y];
+        pre.emplace_back(a, b);
+        pre.insert(pre.end(), post.rbegin(), post.rend());
+        return pre;
     }
 
-    int query_lca(int x, int y) {
+    long long query_lca(long long x, long long y) {
         while (top[x] != top[y]) {
             if (depth[top[x]] < depth[top[y]]) {
                 swap(x, y);
@@ -188,6 +191,7 @@ public:
         return depth[x] < depth[y] ? x : y;
     }
 };
+
 
 class RangeSetPointGet {
 public:

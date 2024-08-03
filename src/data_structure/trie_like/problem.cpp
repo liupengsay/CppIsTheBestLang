@@ -185,7 +185,7 @@ public:
     long long ind;
     long long mask;
 };
-
+// https://codeforces.com/problemset/problem/1055/F
 
 int main() {
     // https://codeforces.com/contest/1980/problem/G

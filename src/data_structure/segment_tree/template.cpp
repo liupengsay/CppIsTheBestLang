@@ -305,6 +305,127 @@ private:
     }
 };
 
+class RangeAscendRangeMax {
+public:
+    long long n;
+    vector<long long> cover; // https://codeforces.com/problemset/problem/1859/D
+    vector<long long> lazy_tag;
+
+    RangeAscendRangeMax(long long size) {
+        n = size;
+        cover.resize(4 * n, LLONG_MIN);
+        lazy_tag.resize(4 * n, LLONG_MIN);
+    }
+
+    void make_tag(long long i, long long val) {
+        cover[i] = max(cover[i], val);
+        lazy_tag[i] = max(lazy_tag[i], val);
+    }
+
+    void push_up(long long i) {
+        cover[i] = max(cover[i << 1], cover[(i << 1) | 1]);
+    }
+
+    void push_down(long long i) {
+        if (lazy_tag[i] != LLONG_MIN) {
+            make_tag(i << 1, lazy_tag[i]);
+            make_tag((i << 1) | 1, lazy_tag[i]);
+            lazy_tag[i] = LLONG_MIN;
+        }
+    }
+
+    void build(const vector<long long>& nums) {
+        vector<tuple<long long, long long, long long>> stack;
+        stack.push_back({0, n - 1, 1});
+        while (!stack.empty()) {
+            auto [s, t, ind] = stack.back();
+            stack.pop_back();
+            if (ind >= 0) {
+                if (s == t) {
+                    make_tag(ind, nums[s]);
+                } else {
+                    stack.push_back({s, t, -ind-1});
+                    long long m = s + (t - s) / 2;
+                    stack.push_back({s, m, 2 * ind});
+                    stack.push_back({m + 1, t, 2 * ind + 1});
+                }
+            } else {
+                ind = -ind-1;
+                push_up(ind);
+            }
+        }
+    }
+
+    vector<long long> get() {
+        vector<long long> nums(n);
+        vector<tuple<long long, long long, long long>> stack;
+        stack.push_back({0, n - 1, 1});
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (s == t) {
+                nums[s] = cover[i];
+            } else {
+                long long m = s + (t - s) / 2;
+                push_down(i);
+                stack.push_back({s, m, i << 1});
+                stack.push_back({m + 1, t, (i << 1) | 1});
+            }
+        }
+        return nums;
+    }
+
+    void range_ascend(long long left, long long right, long long val) {
+        vector<tuple<long long, long long, long long>> stack;
+        stack.push_back({0, n - 1, 1});
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (i >= 0) {
+                if (left <= s && t <= right) {
+                    make_tag(i, val);
+                    continue;
+                }
+                long long m = s + (t - s) / 2;
+                push_down(i);
+                stack.push_back({s, t, -i-1});
+                if (left <= m) {
+                    stack.push_back({s, m, 2 * i});
+                }
+                if (right > m) {
+                    stack.push_back({m + 1, t, 2 * i + 1});
+                }
+            } else {
+                i = -i-1;
+                push_up(i);
+            }
+        }
+    }
+
+    long long range_max(long long left, long long right) {
+        vector<tuple<long long, long long, long long>> stack;
+        stack.push_back({0, n - 1, 1});
+        long long highest = LLONG_MIN;
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (left <= s && t <= right) {
+                highest = max(highest, cover[i]);
+            } else {
+                long long m = s + (t - s) / 2;
+                push_down(i);
+                if (left <= m) {
+                    stack.push_back({s, m, 2 * i});
+                }
+                if (right > m) {
+                    stack.push_back({m + 1, t, 2 * i + 1});
+                }
+            }
+        }
+        return highest;
+    }
+};
+
 
 class RangeAddMulRangeSum {
 public:
@@ -584,6 +705,264 @@ public:
         return ans;
     }
 };
+
+class RangeSetAddRangeSumMinMax {
+public:
+    RangeSetAddRangeSumMinMax(long long n, long long initial = INF) : n(n), initial(initial) {
+        ceil.assign(4 * n, 0);
+        sum.assign(4 * n, 0);
+        floor.assign(4 * n, 0);
+        set_tag.assign(4 * n, -initial);
+        add_tag.assign(4 * n, 0);
+    }
+
+    void build(const vector<long long>& nums) {
+        vector<tuple<long long, long long, long long>> stack;
+        stack.emplace_back(0, n - 1, 1);
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (i >= 0) {
+                if (s == t) {
+                    _make_tag(i, s, t, {-initial, nums[s]});
+                } else {
+                    stack.emplace_back(s, t, ~i);
+                    long long m = s + (t - s) / 2;
+                    stack.emplace_back(s, m, i << 1);
+                    stack.emplace_back(m + 1, t, (i << 1) | 1);
+                }
+            } else {
+                i = ~i;
+                _push_up(i);
+            }
+        }
+    }
+
+    vector<long long> get() {
+        vector<long long> nums(n, 0);
+        vector<tuple<long long, long long, long long>> stack;
+        stack.emplace_back(0, n - 1, 1);
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (s == t) {
+                nums[s] = sum[i];
+                continue;
+            }
+            long long m = s + (t - s) / 2;
+            _push_down(i, s, m, t);
+            stack.emplace_back(s, m, i << 1);
+            stack.emplace_back(m + 1, t, (i << 1) | 1);
+        }
+        return nums;
+    }
+
+    void range_set_add(long long left, long long right, const std::pair<long long, long long>& value) {
+        vector<tuple<long long, long long, long long>> stack;
+        stack.emplace_back(0, n - 1, 1);
+        while (!stack.empty()) {
+            auto [s, t, i] = stack.back();
+            stack.pop_back();
+            if (i >= 0) {
+                if (left <= s && t <= right) {
+                    _make_tag(i, s, t, value);
+                    continue;
+                }
+                stack.emplace_back(s, t, ~i);
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    stack.emplace_back(s, m, i << 1);
+                }
+                if (right > m) {
+                    stack.emplace_back(m + 1, t, (i << 1) | 1);
+                }
+            } else {
+                i = ~i;
+                _push_up(i);
+            }
+        }
+    }
+
+    long long range_max(long long left, long long right) {
+        long long ans = -initial;
+        if (left == right) {
+            long long s = 0, t = n - 1, i = 1;
+            while (true) {
+                if (left <= s && s <= t && t <= right) {
+                    ans = max(ans, ceil[i]);
+                    break;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    s = s, t = m, i = i << 1;
+                }
+                if (right > m) {
+                    s = m + 1, t = t, i = (i << 1) | 1;
+                }
+            }
+        } else {
+            vector<tuple<long long, long long, long long>> stack;
+            stack.emplace_back(0, n - 1, 1);
+            while (!stack.empty()) {
+                auto [s, t, i] = stack.back();
+                stack.pop_back();
+                if (left <= s && t <= right) {
+                    ans = max(ans, ceil[i]);
+                    continue;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    stack.emplace_back(s, m, i << 1);
+                }
+                if (right > m) {
+                    stack.emplace_back(m + 1, t, (i << 1) | 1);
+                }
+            }
+        }
+        return ans;
+    }
+
+    long long range_min(long long left, long long right) {
+        long long ans = initial;
+        if (left == right) {
+            long long s = 0, t = n - 1, i = 1;
+            while (true) {
+                if (left <= s && s <= t && t <= right) {
+                    ans = min(ans, floor[i]);
+                    break;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    s = s, t = m, i = i << 1;
+                }
+                if (right > m) {
+                    s = m + 1, t = t, i = (i << 1) | 1;
+                }
+            }
+        } else {
+            vector<tuple<long long, long long, long long>> stack;
+            stack.emplace_back(0, n - 1, 1);
+            while (!stack.empty()) {
+                auto [s, t, i] = stack.back();
+                stack.pop_back();
+                if (left <= s && t <= right) {
+                    ans = min(ans, floor[i]);
+                    continue;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    stack.emplace_back(s, m, i << 1);
+                }
+                if (right > m) {
+                    stack.emplace_back(m + 1, t, (i << 1) | 1);
+                }
+            }
+        }
+        return ans;
+    }
+
+    long long range_sum(long long left, long long right) {
+        long long ans = 0;
+        if (left == right) {
+            long long s = 0, t = n - 1, i = 1;
+            while (true) {
+                if (left <= s && s <= t && t <= right) {
+                    ans += sum[i];
+                    break;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    s = s, t = m, i = i << 1;
+                }
+                if (right > m) {
+                    s = m + 1, t = t, i = (i << 1) | 1;
+                }
+            }
+        } else {
+            vector<tuple<long long, long long, long long>> stack;
+            stack.emplace_back(0, n - 1, 1);
+            while (!stack.empty()) {
+                auto [s, t, i] = stack.back();
+                stack.pop_back();
+                if (left <= s && t <= right) {
+                    ans += sum[i];
+                    continue;
+                }
+                long long m = s + (t - s) / 2;
+                _push_down(i, s, m, t);
+                if (left <= m) {
+                    stack.emplace_back(s, m, i << 1);
+                }
+                if (right > m) {
+                    stack.emplace_back(m + 1, t, (i << 1) | 1);
+                }
+            }
+        }
+        return ans;
+    }
+
+private:
+    long long n;
+    long long initial;
+    vector<long long> ceil;
+    vector<long long> sum;
+    vector<long long> floor;
+    vector<long long> set_tag;
+    vector<long long> add_tag;
+
+    void _make_tag(long long i, long long s, long long t, const std::pair<long long, long long>& res) {
+        if (res.first > -initial) {
+            ceil[i] = res.first;
+            floor[i] = res.first;
+            sum[i] = res.first * (t - s + 1);
+        } else {
+            ceil[i] += res.second;
+            floor[i] += res.second;
+            sum[i] += res.second * (t - s + 1);
+        }
+        std::tie(set_tag[i], add_tag[i]) = _combine_tag(res, {set_tag[i], add_tag[i]});
+    }
+
+    std::pair<long long, long long> _combine_tag(const std::pair<long long, long long>& res1,
+                                                 const std::pair<long long, long long>& res2) {
+        if (res1.first > -initial) {
+            return {res1.first, 0};
+        }
+        if (res2.first > -initial) {
+            return {res2.first + res1.second, 0};
+        }
+        return {-initial, res2.second + res1.second};
+    }
+
+    void _push_up(long long i) {
+        long long left = ceil[i << 1];
+        long long right = ceil[(i << 1) | 1];
+        ceil[i] = max(left, right);
+
+        sum[i] = sum[i << 1] + sum[(i << 1) | 1];
+
+        left = floor[i << 1];
+        right = floor[(i << 1) | 1];
+        floor[i] = min(left, right);
+    }
+
+    void _push_down(long long i, long long s, long long m, long long t) {
+        auto val = std::make_pair(set_tag[i], add_tag[i]);
+        if (val.first > -initial || val.second) {
+            _make_tag(i << 1, s, m, val);
+            _make_tag((i << 1) | 1, m + 1, t, val);
+            set_tag[i] = -initial;
+            add_tag[i] = 0;
+        }
+    }
+};
+
 class RangeSetPointGet {
 public:
     int n;

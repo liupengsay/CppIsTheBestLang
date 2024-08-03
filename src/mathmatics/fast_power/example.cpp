@@ -1,38 +1,66 @@
-import copy
-import random
-import unittest
+#include <iostream>
+#include <vector>
 
-from src.mathmatics.fast_power.template import FastPower, MatrixFastPower
+const long long MOD = 1000000007;
 
+class Matrix {
+public:
+    std::vector<std::vector<long long>> mat;
+    int size;
 
-class TestGeneral(unittest.TestCase):
+    Matrix(int n) : size(n) {
+        mat.resize(n, std::vector<long long>(n, 0));
+    }
 
-    def test_fast_power(self):
-        fp = FastPower()
-        a, b, mod = random.randint(
-            1, 123), random.randint(
-            1, 1234), random.randint(
-            1, 12345)
-        assert fp.fast_power_api(a, b, mod) == fp.fast_power(a, b, mod)
+    Matrix operator*(const Matrix& other) const {
+        Matrix result(size);
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                for (int k = 0; k < size; ++k) {
+                    result.mat[i][j] = (result.mat[i][j] + mat[i][k] * other.mat[k][j] % MOD) % MOD;
+                }
+            }
+        }
+        return result;
+    }
+};
 
-        x, n = random.uniform(0, 1), random.randint(1, 1234)
-        assert abs(fp.float_fast_pow(x, n) - pow(x, n)) < 1e-5
+Matrix matrix_pow(Matrix base, long long exp) {
+    int n = base.size;
+    Matrix result(n);
+    for (int i = 0; i < n; ++i) {
+        result.mat[i][i] = 1;
+    }
+    while (exp) {
+        if (exp % 2) {
+            result = result * base;
+        }
+        base = base * base;
+        exp /= 2;
+    }
+    return result;
+}
 
-        mfp = MatrixFastPower()
-        mat = [[1, 0, 1], [1, 0, 0], [0, 1, 0]]
-        mod = 10 ** 9 + 7
-        for _ in range(10):
-            n = random.randint(1, 100)
-            cur = copy.deepcopy(mat)
-            for _ in range(1, n):
-                cur = mfp.matrix_mul(cur, mat, mod)
-            assert cur == mfp.matrix_pow(
-                mat, n, mod) == mfp.matrix_pow(mat, n, mod)
+int main() {
+    long long n, m;
+    std::cin >> n >> m;
+    if (n < m) {
+        std::cout << 1 << std::endl;
+        return 0;
+    }
+    // https://codeforces.com/problemset/problem/1117/D
+    Matrix grid(m);
+    for (long long i = 1; i < m; ++i) {
+        grid.mat[i][i-1] = 1;
+    }
+    grid.mat[0][m-1] = grid.mat[m-1][m-1] = 1;
 
-        ba = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        assert mfp.matrix_pow(mat, 0, mod) == mfp.matrix_pow(mat, 0, mod) == ba
-        return
+    Matrix res = matrix_pow(grid, n - m + 1);
+    long long ans = 0;
+    for (int i = 0; i < m; ++i) {
+        ans = (ans + res.mat[m-1][i]) % MOD;
+    }
 
-
-if __name__ == '__main__':
-    unittest.main()
+    std::cout << ans << std::endl;
+    return 0;
+}

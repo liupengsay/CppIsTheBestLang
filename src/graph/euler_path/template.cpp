@@ -1,132 +1,128 @@
-from collections import deque
-from typing import List
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <deque>
+#include <algorithm>
+#include <set>
 
+class UnDirectedEulerPath {
+public:
+    UnDirectedEulerPath(int n, const std::vector<std::pair<int, int>>& pairs) : n(n), pairs(pairs) {
+        get_euler_path();
+    }
 
-class DirectedEulerPath:
-    def __init__(self, n, pairs: List[List[int]]):
-        self.n = n
-        # directed edge
-        self.pairs = pairs
-        # edges order on euler path
-        self.paths = list()
-        # nodes order on euler path
-        self.nodes = list()
-        self.exist = False
-        self.get_euler_path()
-        return
+    bool has_euler_path() const {
+        return exist;
+    }
 
-    def get_euler_path(self):
-        # in and out degree sum of node
-        degree = [0]*self.n
-        edge = [[] for _ in range(self.n)]
-        for i, j in self.pairs:
-            degree[i] += 1
-            degree[j] -= 1
-            edge[i].append(j)
+private:
+    int n;
+    std::vector<std::pair<int, int>> pairs;
+    std::vector<int> paths;
+    std::vector<int> nodes;
+    bool exist = false;
 
-        # visited by lexicographical order
-        for i in range(self.n):
-            edge[i].sort(reverse=True)  # which can be adjusted
+    void get_euler_path() {
+        std::vector<int> degree(n, 0);
+        std::vector<std::unordered_map<int, int>> edge(n);
+        for (const auto& p : pairs) {
+            int i = p.first, j = p.second;
+            degree[i]++;
+            degree[j]++;
+            edge[i][j]++;
+            edge[j][i]++;
+        }
 
-        # find the start point and end point of euler path
-        starts = []
-        ends = []
-        zero = 0
-        for i in range(self.n):
-            if degree[i] == 1:
-                starts.append(i)  # start node which out_degree - in_degree = 1
-            elif degree[i] == -1:
-                ends.append(i)  # start node which out_degree - in_degree = -1
-            else:
-                zero += 1  # other nodes have out_degree - in_degree = 0
-        del degree
+        std::vector<std::deque<int>> edge_dct(n);
+        for (int i = 0; i < n; ++i) {
+            for (const auto& e : edge[i]) {
+                edge_dct[i].push_back(e.first);
+            }
+            std::sort(edge_dct[i].begin(), edge_dct[i].end());
+        }
 
-        if not len(starts) == len(ends) == 1:
-            if zero != self.n:
-                return
-            starts = [0]
+        std::vector<int> starts;
+        int zero = 0;
+        for (int i = 0; i < n; ++i) {
+            if (degree[i] % 2 == 1) {
+                starts.push_back(i);
+            } else {
+                zero++;
+            }
+        }
 
-        # Hierholzer algorithm with iterative implementation
-        stack = [starts[0]]
-        while stack:
-            current = stack[-1]
-            if edge[current]:
-                next_node = edge[current].pop()
-                stack.append(next_node)
-            else:
-                self.nodes.append(current)
-                if len(stack) > 1:
-                    self.paths.append([stack[-2], current])
-                stack.pop()
-        self.paths.reverse()
-        self.nodes.reverse()
+        if (starts.size() != 2) {
+            if (zero != n) {
+                return;
+            }
+            starts = {0};
+        }
 
-        # Pay attention to determining which edge passes through before calculating the Euler path
-        if len(self.nodes) == len(self.pairs) + 1:
-            self.exist = True
-        return
+        std::vector<int> stack = {starts[0]};
+        while (!stack.empty()) {
+            int current = stack.back();
+            int next_node = -1;
+            while (!edge_dct[current].empty()) {
+                int nex = edge_dct[current].front();
+                if (edge[current][nex] == 0) {
+                    edge_dct[current].pop_front();
+                    continue;
+                }
+                if (edge[current][nex] > 0) {
+                    edge[current][nex]--;
+                    edge[nex][current]--;
+                    next_node = nex;
+                    stack.push_back(next_node);
+                    break;
+                }
+            }
+            if (next_node == -1) {
+                nodes.push_back(current);
+                if (stack.size() > 1) {
+                    int pre = stack[stack.size() - 2];
+                    paths.push_back(current);
+                }
+                stack.pop_back();
+            }
+        }
+        std::reverse(paths.begin(), paths.end());
+        std::reverse(nodes.begin(), nodes.end());
 
+        if (nodes.size() == pairs.size() + 1) {
+            exist = true;
+        }
+    }
+};
 
-class UnDirectedEulerPath:
-    def __init__(self, n, pairs: List[int]):
-        self.n = n
-        # undirected edge
-        self.pairs = pairs
-        self.paths = list()
-        self.nodes = list()
-        self.exist = False
-        self.get_euler_path()
-        return
+char a[12],b[12];
 
-    def get_euler_path(self):
-        degree = [0]*self.n
-        edge = [dict() for _ in range(self.n)]
-        for i, j in self.pairs:
-            degree[i] += 1
-            degree[j] += 1
-            edge[i][j] = edge[i].get(j, 0) + 1
-            edge[j][i] = edge[j].get(i, 0) + 1
-        edge_dct = [deque(sorted(dt)) for dt in edge]  # visited by order of node id
-        starts = []
-        zero = 0
-        for i in range(self.n):
-            if degree[i] % 2:  # which can be start point or end point
-                starts.append(i)
-            else:
-                zero += 1
-        del degree
+class Solution {
+public:
+    static void main() {
+        std::vector<std::string> pairs;
+        while(scanf("%s%s",a,b)!=EOF){
+            pairs.push_back(static_cast<std::string>(a));
+            pairs.push_back(static_cast<std::string>(b));
+        }
 
-        if not len(starts) == 2:
-            # just two nodes have odd degree and others have even degree
-            if zero != self.n:
-                return
-            starts = [0]
+        std::set<std::string> nodes_set(pairs.begin(), pairs.end());
+        std::unordered_map<std::string, int> ind;
+        int idx = 0;
+        for (const auto& node : nodes_set) {
+            ind[node] = idx++;
+        }
 
-        # Hierholzer algorithm with iterative implementation
-        stack = [starts[0]]
-        while stack:
-            current = stack[-1]
-            next_node = None
-            while edge_dct[current]:
-                if not edge[current][edge_dct[current][0]]:
-                    edge_dct[current].popleft()
-                    continue
-                nex = edge_dct[current][0]
-                if edge[current][nex]:
-                    edge[current][nex] -= 1
-                    edge[nex][current] -= 1
-                    next_node = nex
-                    stack.append(next_node)
-                    break
-            if next_node is None:
-                self.nodes.append(current)
-                if len(stack) > 1:
-                    pre = stack[-2]
-                    self.paths.append([pre, current])
-                stack.pop()
-        self.paths.reverse()
-        self.nodes.reverse()
-        # Pay attention to determining which edge passes through before calculating the Euler path
-        if len(self.nodes) == len(self.pairs) + 1:
-            self.exist = True
-        return
+        std::vector<std::pair<int, int>> pairs_idx;
+        for (size_t i = 0; i < pairs.size(); i += 2) {
+            pairs_idx.emplace_back(ind[pairs[i]], ind[pairs[i + 1]]);
+        }
+
+        UnDirectedEulerPath euler(static_cast<int>(ind.size()), pairs_idx);
+        std::cout << (euler.has_euler_path() ? "Possible" : "Impossible") << std::endl;
+    }
+};
+
+int main() {
+    Solution::main();
+    return 0;
+}

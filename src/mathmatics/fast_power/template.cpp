@@ -25,3 +25,30 @@ long long power(long long a, long long b, long long mod) {
 long long mod_inverse(long long a, long long mod) {
     return power(a, mod - 2, mod);
 }
+
+
+long long mod_inverse_mod_not_prime(long long a, long long mod) {
+    long long m0 = mod, t, q;
+    long long x0 = 0, x1 = 1;
+
+    if (mod == 1) return 0;
+
+    while (a > 1) {
+        // q 是商
+        q = a / mod;
+        t = mod;
+
+        // m 是余数，现在是模
+        mod = a % mod, a = t;
+
+        t = x0;
+
+        x0 = x1 - q * x0;
+
+        x1 = t;
+    }
+
+    if (x1 < 0) x1 += m0;
+
+    return x1;
+}
